@@ -17,6 +17,7 @@ public class TeleOp extends OpMode{
     @Override
     public void init(){
         lift = hardwareMap.get(DcMotor.class, "lift");
+        platformTouch =
 
     }
     @Override
