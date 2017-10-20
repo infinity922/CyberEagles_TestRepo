@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class TeleOp extends OpMode{
 
     private DcMotor lift = null;
-    DigitalChannel platformTouch
+    DigitalChannel platformTouch;
 
     @Override
     public void init(){
