@@ -28,6 +28,7 @@ public class TeleOp extends OpMode{
     @Override
     public void loop(){
 
+        // not pressed state == true
     }
     @Override
     public void stop(){
