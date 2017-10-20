@@ -59,7 +59,7 @@ public class BasicOpMode_Iterative extends OpMode
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
-    private Servo servo = null;
+    private Servo left = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -96,6 +96,7 @@ public class BasicOpMode_Iterative extends OpMode
     @Override
     public void start() {
         runtime.reset();
+        left.setPosition(0.1);
     }
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
