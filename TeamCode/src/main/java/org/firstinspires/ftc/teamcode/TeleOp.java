@@ -32,22 +32,34 @@ public class TeleOp extends OpMode {
     private boolean pressedb = false;
     private boolean rightGrabbed = false;
     @Override
-    public void init(){
+    public void init() {
         //find hardware on HWMap
+        grabTouch = hardwareMap.get(TouchSensor.class, "grabTouch");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         dumper = hardwareMap.get(DcMotor.class, "dumper");
-        grabber = hardwareMap.get(DcMotor.class,"grabber");
+        grabber = hardwareMap.get(DcMotor.class, "grabber");
         leftGrab = hardwareMap.get(Servo.class, "leftGrab");
         rightGrab = hardwareMap.get(Servo.class, "rightGrab");
         grabTilt = hardwareMap.get(Servo.class, "grabTilt");
 
         //set necessary motors to REVERSE
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        grabber.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //set dumper and grabber to RUN_USING_ENCODER
         grabber.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        dumper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        grabber.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        dumper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //init servo positions
+        //issue with Servo Channel 2
+        leftGrab.setPosition(.1);
+        //GET AIDEN TO REPLACE THE RIGHT SERVO!!!!!!
+        //rightGrab.setPosition(0);
+        grabTilt.setPosition(1);
     }
 
     @Override
@@ -99,23 +111,51 @@ public class TeleOp extends OpMode {
         backRight.setPower(br);
 
         //run grabber arm to either position using button
+        //1220 ticks/rev on andymark motors?
         if (gamepad2.y){
             grabber.setTargetPosition(90);
             grabber.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            grabber.setPower(.5);
         }
 
         if (gamepad2.x){
             grabber.setTargetPosition(0);
             grabber.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            grabber.setPower(.5);
+        }
+
+        //run dumper arm to either position
+        if (gamepad2.left_bumper){
+            dumper.setTargetPosition(0);
+            dumper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            dumper.setPower(.5);
+        }
+
+        if (gamepad2.right_bumper){
+            dumper.setTargetPosition(135);
+            dumper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            dumper.setPower(.5);
         }
 
         //rightGrab to position change
-
-        if (!grabTouch.isPressed()&&)
-
-
-
+        //CREATE A RESET FUNCTION FOR THE SERVOS
         if (gamepad2.a){
+            if (!grabTouch.isPressed()) {
+                double leftGrabPos = leftGrab.getPosition();
+                double rightGrabPos = rightGrab.getPosition();
+                if (leftGrabPos < .1) {
+                    leftGrab.setPosition(leftGrabPos + 0.1);
+                }
+                //arbitrary # that is supposed to stop it when the arm has gone too far.
+                if (rightGrabPos > .8) {
+                    rightGrab.setPosition(rightGrabPos - .1);
+                }
+            }
+        }
+
+
+
+        /*if (gamepad2.a){
             presseda = true;
         }
         if (!gamepad2.a && presseda){
@@ -139,8 +179,6 @@ public class TeleOp extends OpMode {
             }
             pressedb = false;
         }
-
-
-
+*/
     }
 }
