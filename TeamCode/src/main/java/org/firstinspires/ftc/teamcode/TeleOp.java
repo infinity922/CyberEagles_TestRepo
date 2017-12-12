@@ -147,21 +147,9 @@ public class TeleOp extends OpMode {
         telemetry.addData("leftGrab: ", leftGrab.getPosition());
         telemetry.addData("grabTilt: ", grabTilt.getPosition());
 
+        //to slowly close the glyph grippers when a is pressed until the touch sensor is pressed
         if (gamepad2.a) {
-            //where false == not pressed
-            telemetry.addData("Touch: ", grabTouch.getState());
-            /*if (grabTouch.getState() == true) {
-                double leftGrabPos = leftGrab.getPosition();
-                double rightGrabPos = rightGrab.getPosition();
-                leftGrab.setPosition(leftGrabPos);
-                rightGrab.setPosition(rightGrabPos);
-            }else{
-                leftGrab.setPosition(.4);
-                //arbitrary # that is supposed to stop it when the arm has gone too far.
-                rightGrab.setPosition(.7);
-            }
-            */
-            for(double i=0; !grabTouch.getState();i+=.01){
+            for(double i=0; !grabTouch.getState();i+=.03){
                 if ((leftGrab.getPosition() != 0) | (rightGrab.getPosition() !=0)) {
                     double leftGrabPos = leftGrab.getPosition() - i;
                     double rightGrabPos = rightGrab.getPosition() - i;
@@ -172,11 +160,18 @@ public class TeleOp extends OpMode {
                 if (!gamepad2.a) break;
             }
         }
-        if (gamepad2.b) {
-            leftGrab.setPosition(1);
-            rightGrab.setPosition(1);
+        // to open the glyph arms incrementally while b is pressed
+            for(double i=0; gamepad2.b; i+=.02){
+            if ((leftGrab.getPosition()!= 1) | (rightGrab.getPosition()!=1)) {
+                double leftGrabPos = leftGrab.getPosition() + i;
+                double rightGrabPos = rightGrab.getPosition() + i;
+                leftGrab.setPosition(leftGrabPos);
+                rightGrab.setPosition(rightGrabPos);
+            }
+            i=0;
+            if(!gamepad2.b) break;
+            }
 
-        }
 
 
 
