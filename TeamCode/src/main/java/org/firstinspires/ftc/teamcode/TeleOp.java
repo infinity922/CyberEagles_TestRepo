@@ -5,9 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-
-import static com.sun.tools.doclint.Entity.or;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class TeleOp extends OpMode {
@@ -149,7 +146,7 @@ public class TeleOp extends OpMode {
 
         //to slowly close the glyph grippers when a is pressed until the touch sensor is pressed
         if (gamepad2.a) {
-            for(double i=0; !grabTouch.getState();i+=.03){
+   /*         for(double i=0; !grabTouch.getState();i+=.03){
                 if ((leftGrab.getPosition() != 0) | (rightGrab.getPosition() !=0)) {
                     double leftGrabPos = leftGrab.getPosition() - i;
                     double rightGrabPos = rightGrab.getPosition() - i;
@@ -158,10 +155,22 @@ public class TeleOp extends OpMode {
                 }
                 i=0;
                 if (!gamepad2.a) break;
+            }*/
+            if (!grabTouch.getState()){
+                //check the position individually so each servo can be manipulated individually.
+                //Can also set position limits
+                if (leftGrab.getPosition() !=0){
+                    double leftGrabPos = leftGrab.getPosition() -.03;
+                    leftGrab.setPosition(leftGrabPos);
+                }
+                if (rightGrab.getPosition() !=0){
+                    double rightGrabPos = rightGrab.getPosition() -.03;
+                    rightGrab.setPosition(rightGrabPos);
+                }
             }
         }
         // to open the glyph arms incrementally while b is pressed
-            for(double i=0; gamepad2.b; i+=.02){
+   /*         for(double i=0; gamepad2.b; i+=.02){
             if ((leftGrab.getPosition()!= 1) | (rightGrab.getPosition()!=1)) {
                 double leftGrabPos = leftGrab.getPosition() + i;
                 double rightGrabPos = rightGrab.getPosition() + i;
@@ -170,35 +179,18 @@ public class TeleOp extends OpMode {
             }
             i=0;
             if(!gamepad2.b) break;
-            }
-
-
-
-
-        /*if (gamepad2.a){
-            presseda = true;
-        }
-        if (!gamepad2.a && presseda){
-            if (!rightGrabbed){
-                rightGrab.setPosition(.5);
-
-            }else{
-                rightGrab.setPosition(.7);
-            }
-            presseda = false;
-        }
-        if (gamepad2.b){
-            pressedb = true;
-        }
-        if (!gamepad2.b && pressedb){
-            if (!rightGrabbed){
-
-
-            }else{
-                leftGrab.setPosition(.7);
-            }
-            pressedb = false;
-        }
-*/
+            } */
+   if (gamepad2.b){
+       //check the position individually so each servo can be manipulated individually.
+       //Can also set position limits
+       if (leftGrab.getPosition() !=1){
+           double leftGrabPosition = leftGrab.getPosition() +.02;
+           leftGrab.setPosition(leftGrabPosition);
+       }
+       if (rightGrab.getPosition() !=1){
+           double rightGrabPos = rightGrab.getPosition() +.02;
+           rightGrab.setPosition(rightGrabPos);
+       }
+   }
     }
 }
