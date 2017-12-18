@@ -52,57 +52,40 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Basic: Iterative OpMode", group="Iterative Opmode")
-@Disabled
 public class BasicOpMode_Iterative extends OpMode
 {
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
-    private Servo left = null;
+    private DcMotor left = null;
+    private DcMotor right = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        telemetry.addData("Status", "Initialized");
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        left  = hardwareMap.get(DcMotor.class, "l");
+        right = hardwareMap.get(DcMotor.class, "r");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        left.setDirection(DcMotor.Direction.FORWARD);
+        right.setDirection(DcMotor.Direction.REVERSE);
 
-        // Tell the driver that initialization is complete.
-        telemetry.addData("Status", "Initialized");
     }
 
-    /*
-     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
-     */
     @Override
     public void init_loop() {
     }
 
-    /*
-         * Code to run ONCE when the driver hits PLAY
-         */
+
     @Override
-    public void start() {
-        runtime.reset();
-        left.setPosition(0.1);
-    }
-    /*
-     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
-     */
+    public void start() {    }
+
     @Override
     public void loop() {
+        left.setPower(-gamepad1.left_stick_y);
+        right.setPower(-gamepad1.right_stick_y);
     }
 
     /*
@@ -110,6 +93,8 @@ public class BasicOpMode_Iterative extends OpMode
      */
     @Override
     public void stop() {
+        left.setPower(0);
+        right.setPower(0);
     }
 
 }
