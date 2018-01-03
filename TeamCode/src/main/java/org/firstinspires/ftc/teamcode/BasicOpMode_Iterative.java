@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -55,8 +56,10 @@ import com.qualcomm.robotcore.util.Range;
 public class BasicOpMode_Iterative extends OpMode
 {
     // Declare OpMode members.
-    private DcMotor left = null;
-    private DcMotor right = null;
+    private DcMotor leftDrive = null;
+    private DcMotor rightDrive = null;
+    private DcMotor leftArm, rightArm = null;
+    private Servo left, right = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -64,13 +67,22 @@ public class BasicOpMode_Iterative extends OpMode
     @Override
     public void init() {
 
-        left  = hardwareMap.get(DcMotor.class, "l");
-        right = hardwareMap.get(DcMotor.class, "r");
+        leftDrive  = hardwareMap.get(DcMotor.class, "leftDrive");
+        rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
+        leftArm = hardwareMap.dcMotor.get("leftArm");
+        rightArm = hardwareMap.dcMotor.get("rightArm");
+        left = hardwareMap.servo.get("left");
+        right = hardwareMap.servo.get("right");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        left.setDirection(DcMotor.Direction.FORWARD);
-        right.setDirection(DcMotor.Direction.REVERSE);
+        leftDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftArm.setDirection(DcMotor.Direction.FORWARD);
+        rightArm.setDirection(DcMotor.Direction.REVERSE);
+
+        left.setPosition(.5);
+        right.setPosition(.5);
 
     }
 
@@ -84,8 +96,38 @@ public class BasicOpMode_Iterative extends OpMode
 
     @Override
     public void loop() {
-        left.setPower(-gamepad1.left_stick_y);
-        right.setPower(-gamepad1.right_stick_y);
+        leftDrive.setPower(-gamepad1.left_stick_y+gamepad1.left_stick_x);
+        rightDrive.setPower(-gamepad1.right_stick_y - gamepad1.right_stick_x);
+        leftArm.setPower(-gamepad2.left_stick_y);
+        rightArm.setPower(-gamepad2.right_stick_y);
+
+        if (gamepad2.b){
+            //check the position individually so each servo can be manipulated individually.
+            //Can also set position limits
+            if (right.getPosition() !=1){
+                double rightGrabPosition = right.getPosition() +.02;
+                right.setPosition(rightGrabPosition);
+            }}
+            if (gamepad2.x){
+            if (right.getPosition() !=0){
+                double rightGrabPos = right.getPosition() -.02;
+                right.setPosition(rightGrabPos);
+            }
+        }
+
+        if (gamepad2.b){
+            //check the position individually so each servo can be manipulated individually.
+            //Can also set position limits
+            if (left.getPosition() !=1){
+                double leftGrabPosition = left.getPosition() +.02;
+                left.setPosition(leftGrabPosition);
+            }}
+            if (gamepad2.y){
+            if (right.getPosition() !=0){
+                double rightGrabPos = right.getPosition() -.02;
+                right.setPosition(rightGrabPos);
+            }
+        }
     }
 
     /*
@@ -93,8 +135,10 @@ public class BasicOpMode_Iterative extends OpMode
      */
     @Override
     public void stop() {
-        left.setPower(0);
-        right.setPower(0);
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+        leftArm.setPower(0);
+        rightArm.setPower(0);
     }
 
 }
