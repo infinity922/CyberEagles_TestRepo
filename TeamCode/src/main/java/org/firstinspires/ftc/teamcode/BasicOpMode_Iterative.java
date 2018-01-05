@@ -60,6 +60,9 @@ public class BasicOpMode_Iterative extends OpMode
     private DcMotor rightDrive = null;
     private DcMotor leftArm, rightArm = null;
     private Servo left, right = null;
+    private DcMotor tipper = null;
+    private Servo hugger = null;
+    private DcMotor slider = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -73,6 +76,9 @@ public class BasicOpMode_Iterative extends OpMode
         rightArm = hardwareMap.dcMotor.get("rightArm");
         left = hardwareMap.servo.get("left");
         right = hardwareMap.servo.get("right");
+        tipper = hardwareMap.dcMotor.get("tipper");
+        hugger = hardwareMap.servo.get ("hugger");
+        slider = hardwareMap.dcMotor.get("slider");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -83,6 +89,7 @@ public class BasicOpMode_Iterative extends OpMode
 
         left.setPosition(.5);
         right.setPosition(.5);
+        hugger.setPosition(.5);
 
     }
 
@@ -98,10 +105,12 @@ public class BasicOpMode_Iterative extends OpMode
     public void loop() {
         leftDrive.setPower(-gamepad1.left_stick_y+gamepad1.left_stick_x);
         rightDrive.setPower(-gamepad1.right_stick_y - gamepad1.right_stick_x);
-        leftArm.setPower(-gamepad2.left_stick_y);
-        rightArm.setPower(-gamepad2.right_stick_y);
+        leftArm.setPower(-gamepad2.left_trigger);
+        rightArm.setPower(gamepad2.right_trigger);
+        tipper.setPower(gamepad2.left_stick_y/2);
+        slider.setPower(gamepad2.right_stick_x);
 
-        if (gamepad2.b){
+        if (gamepad2.a){
             //check the position individually so each servo can be manipulated individually.
             //Can also set position limits
             if (right.getPosition() !=1){
@@ -128,6 +137,19 @@ public class BasicOpMode_Iterative extends OpMode
                 right.setPosition(rightGrabPos);
             }
         }
+        if (gamepad1.a){
+            //check the position individually so each servo can be manipulated individually.
+            //Can also set position limits
+            if (hugger.getPosition() !=1){
+                double huggerPosition = hugger.getPosition() +.02;
+                hugger.setPosition(huggerPosition);
+            }}
+        if (gamepad1.b){
+            if (hugger.getPosition() !=0){
+                double huggerPos = hugger.getPosition() -.02;
+                hugger.setPosition(huggerPos);
+            }
+        }
     }
 
     /*
@@ -142,3 +164,4 @@ public class BasicOpMode_Iterative extends OpMode
     }
 
 }
+
