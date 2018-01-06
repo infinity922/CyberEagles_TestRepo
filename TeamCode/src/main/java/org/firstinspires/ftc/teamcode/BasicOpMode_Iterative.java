@@ -101,7 +101,7 @@ public class BasicOpMode_Iterative extends OpMode
         leftArm.setPower(-gamepad2.left_stick_y);
         rightArm.setPower(-gamepad2.right_stick_y);
 
-        if (gamepad2.b){
+        if (gamepad2.a){
             //check the position individually so each servo can be manipulated individually.
             //Can also set position limits
             if (right.getPosition() !=1){
@@ -123,9 +123,9 @@ public class BasicOpMode_Iterative extends OpMode
                 left.setPosition(leftGrabPosition);
             }}
             if (gamepad2.y){
-            if (right.getPosition() !=0){
-                double rightGrabPos = right.getPosition() -.02;
-                right.setPosition(rightGrabPos);
+            if (left.getPosition() !=0){
+                double leftGrabPos = left.getPosition() -.02;
+                left.setPosition(leftGrabPos);
             }
         }
     }

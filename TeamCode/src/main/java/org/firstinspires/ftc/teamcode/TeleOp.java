@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -14,12 +13,8 @@ public class TeleOp extends OpMode {
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
-    private DcMotor dumper;
-    private DcMotor grabber;
-    private Servo leftGrab;
-    private Servo rightGrab;
-    private Servo grabTilt;
-    private DigitalChannel grabTouch;
+//    private DcMotor armOut, armIn, grabber = null;
+//    private Servo gripper, rGrab, rPivot = null;
 
     //variables to store motor values to prevent stuttering
     private double fl;
@@ -27,41 +22,32 @@ public class TeleOp extends OpMode {
     private double bl;
     private double br;
 
-    //servo-related variables
-    private boolean presseda = false;
-    private boolean pressedb = false;
-    private boolean rightGrabbed = false;
-
     @Override
     public void init() {
         //find hardware on HWMap
-        grabTouch = hardwareMap.get(DigitalChannel.class, "grabTouch");
+ //       armOut = hardwareMap.get(DcMotor.class, "armOut");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.dcMotor.get("frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-        dumper = hardwareMap.get(DcMotor.class, "dumper");
+ /*       armIn = hardwareMap.get(DcMotor.class, "armIn");
         grabber = hardwareMap.get(DcMotor.class, "grabber");
-        leftGrab = hardwareMap.get(Servo.class, "leftGrab");
-        rightGrab = hardwareMap.get(Servo.class, "rightGrab");
-        grabTilt = hardwareMap.get(Servo.class, "grabTilt");
+        gripper= hardwareMap.get(Servo.class, "gripper");
+        rGrab = hardwareMap.get(Servo.class, "rGrab");
+        rPivot = hardwareMap.get(Servo.class, "rPivot");*/
 
         //set necessary motors to REVERSE
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //set dumper and grabber to RUN_USING_ENCODER
-        grabber.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        dumper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        grabber.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        dumper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        grabTouch.setMode(DigitalChannel.Mode.INPUT);
+        //set grabber to RUN_USING_ENCODER
+    //    grabber.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    //    grabber.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //init servo positions
 
-        leftGrab.setPosition(0);
-        rightGrab.setPosition(.7);
-        grabTilt.setPosition(1);
+     //   gripper.setPosition(0);
+       // rGrab.setPosition(0);
+        //rPivot.setPosition(0);
     }
 
     @Override
@@ -111,7 +97,7 @@ public class TeleOp extends OpMode {
         frontRight.setPower(fr);
         backLeft.setPower(bl);
         backRight.setPower(br);
-
+/**
         //run grabber arm to either position using button
         //1220 ticks/rev on andymark motors?
         if (gamepad2.y) {
@@ -126,49 +112,13 @@ public class TeleOp extends OpMode {
             grabber.setPower(.5);
         }
 
-        //run dumper arm to either position
-        if (gamepad2.left_bumper) {
-            dumper.setTargetPosition(0);
-            dumper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            dumper.setPower(.5);
-        }
-
-        if (gamepad2.right_bumper) {
-            dumper.setTargetPosition(135);
-            dumper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            dumper.setPower(.5);
-        }
-
         //CREATE A RESET FUNCTION FOR THE SERVOS
-        telemetry.addData("rightGrab: ", rightGrab.getPosition());
-        telemetry.addData("leftGrab: ", leftGrab.getPosition());
-        telemetry.addData("grabTilt: ", grabTilt.getPosition());
+        telemetry.addData("rGrab: ", rGrab.getPosition());
+        telemetry.addData("rPivot: ", rPivot.getPosition());
+        telemetry.addData("gripper: ", gripper.getPosition());
 
         //to slowly close the glyph grippers when a is pressed until the touch sensor is pressed
-        if (gamepad2.a) {
-   /*         for(double i=0; !grabTouch.getState();i+=.03){
-                if ((leftGrab.getPosition() != 0) | (rightGrab.getPosition() !=0)) {
-                    double leftGrabPos = leftGrab.getPosition() - i;
-                    double rightGrabPos = rightGrab.getPosition() - i;
-                    leftGrab.setPosition(leftGrabPos);
-                    rightGrab.setPosition(rightGrabPos);
-                }
-                i=0;
-                if (!gamepad2.a) break;
-            }*/
-            if (!grabTouch.getState()){
-                //check the position individually so each servo can be manipulated individually.
-                //Can also set position limits
-                if (leftGrab.getPosition() !=0){
-                    double leftGrabPos = leftGrab.getPosition() -.03;
-                    leftGrab.setPosition(leftGrabPos);
-                }
-                if (rightGrab.getPosition() !=0){
-                    double rightGrabPos = rightGrab.getPosition() -.03;
-                    rightGrab.setPosition(rightGrabPos);
-                }
-            }
-        }
+        //example
         // to open the glyph arms incrementally while b is pressed
    /*         for(double i=0; gamepad2.b; i+=.02){
             if ((leftGrab.getPosition()!= 1) | (rightGrab.getPosition()!=1)) {
@@ -180,17 +130,33 @@ public class TeleOp extends OpMode {
             i=0;
             if(!gamepad2.b) break;
             } */
+/**
+   if (gamepad2.a){
+       if (rPivot.getPosition() !=1){
+           double rPivotPos = rPivot.getPosition();
+           rPivot.setPosition((.02 + rPivotPos));
+   }    }
    if (gamepad2.b){
-       //check the position individually so each servo can be manipulated individually.
-       //Can also set position limits
-       if (leftGrab.getPosition() !=1){
-           double leftGrabPosition = leftGrab.getPosition() +.02;
-           leftGrab.setPosition(leftGrabPosition);
-       }
-       if (rightGrab.getPosition() !=1){
-           double rightGrabPos = rightGrab.getPosition() +.02;
-           rightGrab.setPosition(rightGrabPos);
+        if (rPivot.getPosition() !=0){
+            double rGrabPos = rGrab.getPosition();
+            rGrab.setPosition((rGrabPos -.02));
+   }}
+   if (gamepad2.x){
+       if (rGrab.getPosition() !=1) {
+           double rGrabPos = rGrab.getPosition();
+           rGrab.setPosition((rGrabPos+.02));
        }
    }
+   if (gamepad2.y){
+       if (rGrab.getPosition() !=0){
+           double rGrabPos = rGrab.getPosition();
+           rGrab.setPosition(rGrabPos-.02);
+       }
+   }
+   //armIn.setPower(-gamepad2.left_stick_y/2);
+   //armOut.setPower(-gamepad2.right_stick_y/2);
+   grabber.setPower(-gamepad2.left_stick_y/2);
+   int gPos = grabber.getCurrentPosition();
+   telemetry.addData("Grabber Pos", gPos);*/
     }
 }
