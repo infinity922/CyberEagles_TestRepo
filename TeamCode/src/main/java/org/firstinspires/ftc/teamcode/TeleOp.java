@@ -72,7 +72,7 @@ public class TeleOp extends OpMode {
             //  grabArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             //  grabArm.setPower(.75);
             //refine this:
-            grabArm.setPower(-gamepad2.right_stick_y);
+            grabArm.setPower(-gamepad2.right_stick_y/2);
             if (gamepad1.a) gripper.setPosition(1);
             if (gamepad1.b) gripper.setPosition(0);
             /*
