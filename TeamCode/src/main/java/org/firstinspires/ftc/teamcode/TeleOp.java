@@ -15,7 +15,7 @@ public class TeleOp extends OpMode {
 
         @Override
         public void init(){
-            grabArm = hardwareMap.dcMotor.get("grabArm");
+            grabArm = hardwareMap.dcMotor.get("grabber");
             frontLeft = hardwareMap.dcMotor.get("frontLeft");
             frontRight = hardwareMap.dcMotor.get("frontRight");
             backLeft = hardwareMap.dcMotor.get("backLeft");
@@ -68,23 +68,23 @@ public class TeleOp extends OpMode {
             //max Position = 543
 
             // use this if encoders can be used
-            //  grabArm.setTargetPosition((int)(-gamepad2.right_stick_y*543));
-            //  grabArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            //  grabArm.setPower(.75);
+             grabArm.setTargetPosition((int)(-gamepad2.left_stick_y*543));
+              grabArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+              grabArm.setPower(.75);
             //refine this:
-            grabArm.setPower(-gamepad2.right_stick_y/2);
-            if (gamepad1.a) gripper.setPosition(1);
-            if (gamepad1.b) gripper.setPosition(0);
+            //grabArm.setPower(-gamepad2.right_stick_y/2);
+            if (gamepad2.a) gripper.setPosition(1);
+            if (gamepad2.b) gripper.setPosition(0);
             /*
              * think about using a stage system too for the glyph arm
              */
         }
         private void mecanumDrive(){
             //this part does front, back, left and right from gamepad1.left_stick
-            fl = gamepad1.left_stick_y - gamepad1.left_stick_x;
-            fr = gamepad1.left_stick_y + gamepad1.left_stick_x;
-            bl = gamepad1.left_stick_y + gamepad1.left_stick_x;
-            br = gamepad1.left_stick_y - gamepad1.left_stick_x;
+            fl = gamepad1.left_stick_y + gamepad1.left_stick_x;
+            fr = gamepad1.left_stick_y - gamepad1.left_stick_x;
+            bl = gamepad1.left_stick_y - gamepad1.left_stick_x;
+            br = gamepad1.left_stick_y + gamepad1.left_stick_x;
 
             //this part does swiveling
             if (fl - gamepad1.right_stick_x > 1) {
@@ -120,9 +120,21 @@ public class TeleOp extends OpMode {
             }
 
             //this sends the variables to the motors
-            frontLeft.setPower(fl);
-            frontRight.setPower(fr);
-            backLeft.setPower(bl);
-            backRight.setPower(br);
+            //with a slow mode
+            if (gamepad1.right_trigger!=0){
+                frontLeft.setPower(fl/2);
+                frontRight.setPower(fr/2);
+                backLeft.setPower(bl/2);
+                backRight.setPower(br/2);
+            }else {
+                frontLeft.setPower(fl);
+                frontRight.setPower(fr);
+                backLeft.setPower(bl);
+                backRight.setPower(br);
+            }
+        }
+
+        private void extender (){
+            armOut.setPower(0);
         }
     }

@@ -33,7 +33,7 @@ public class VuforiaTest extends LinearOpMode {
 
         //create VuforiaLocalizer
         VuforiaLocalizer vuforia = ClassFactory.createVuforiaLocalizer(params);
-        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 3);
+        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4);
 
         VuforiaTrackables cards = vuforia.loadTrackablesFromAsset("Cards");
 
