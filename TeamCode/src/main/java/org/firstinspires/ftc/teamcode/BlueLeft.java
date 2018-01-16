@@ -36,9 +36,11 @@ public class BlueLeft extends LinearOpMode {
     private double fr;
     private double bl;
     private double br;
+    private DriveUsingImage driver;
 
     @Override
     public void runOpMode() throws InterruptedException {
+
         armOut = hardwareMap.get(DcMotor.class, "armOut");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.dcMotor.get("frontRight");
@@ -55,6 +57,7 @@ public class BlueLeft extends LinearOpMode {
         rHold = hardwareMap.servo.get("rHold");
         jewel = hardwareMap.servo.get("jewel");
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
+        driver = new DriveUsingImage(frontLeft, frontRight, backLeft, backRight);
 
         if (colorSensor instanceof SwitchableLight) {
             ((SwitchableLight)colorSensor).enableLight(true);
@@ -79,6 +82,7 @@ public class BlueLeft extends LinearOpMode {
         waitForStart();
         relicTrackables.activate();
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTrackable);
+        driver.driveTo(100,40000, 27.5, relicTrackable);
 
 
         /* = .2;
@@ -128,21 +132,14 @@ public class BlueLeft extends LinearOpMode {
             telemetry.addData("trackable", vuMark);telemetry.update();
             telemetry.addData("trans", pose != null ? pose.getTranslation() : "INVISIBLE");
             telemetry.addData("angle", heading);
+
         }
+
+
+
     }
 
-    public void updateDrive(){
-        backLeft.setPower(bl);
-        backRight.setPower(br);
-        frontLeft.setPower(fl);
-        frontRight.setPower(fr);
-    }
-    public void stopDrive(){
-        backLeft.setPower(0);
-        backRight.setPower(0);
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-    }
+
 
     static VectorF getEuler(OpenGLMatrix pose) {
         double heading, pitch, roll;
@@ -166,4 +163,6 @@ public class BlueLeft extends LinearOpMode {
 
         return new VectorF((float) Math.toDegrees(roll), (float) Math.toDegrees(heading), (float) Math.toDegrees(pitch));
     }
+
+
 }
