@@ -18,6 +18,9 @@ class DriveUsingImage{
     private DcMotor backLeft, backRight, frontLeft, frontRight;
 
     private double fl, fr, bl, br;
+    double orbit = 0;
+    double strafe = 0;
+    double direction = 0;
 
 
 
@@ -31,8 +34,6 @@ class DriveUsingImage{
 
     void driveTo(double x, double y, double rot, VuforiaTrackable relicTrackable){
 
-
-
         double phoneMax = 34; // this is a made-up value, will have to test to get the real one
         double phoneMin = -34;
         OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
@@ -41,33 +42,42 @@ class DriveUsingImage{
         double currentx = currentTrans.get(0);
         double currenty = currentTrans.get(1);
         double cameraAngle = Math.toDegrees(Math.atan2(currenty,currentx)-Math.toRadians(heading));
-        if (cameraAngle < phoneMin){
-            orbitccw();
-        }else if (cameraAngle>phoneMax){
-            orbitcw();
-        }else{
-            noOrbit();
-        }
+
     }
 
 
 
-    void updateDrive() {
+    private void updateDrive() {
         backLeft.setPower(bl);
         backRight.setPower(br);
         frontLeft.setPower(fl);
         frontRight.setPower(fr);
     }
 
-    void orbitccw(){
 
+
+    void setOrbit(){
+        fl = fl + orbit;
+        fr = fr - orbit;
+        bl = bl + orbit;
+        br = br - orbit;
+        updateDrive();
     }
 
-    void orbitcw(){
-
+    void setStrafe(){
+        fl = fl + strafe;
+        fr = fr - strafe;
+        bl = bl - strafe;
+        br = br + strafe;
+        updateDrive();
     }
-    void noOrbit(){
 
+    void setDirection(){
+        fr = fr + direction;
+        fl = fl + direction;
+        bl = bl + direction;
+        br = br + direction;
+        updateDrive();
     }
 
     void stopDrive() {
