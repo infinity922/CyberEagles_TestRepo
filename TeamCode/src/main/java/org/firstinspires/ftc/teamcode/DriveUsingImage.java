@@ -30,11 +30,24 @@ class DriveUsingImage{
     }
 
     void driveTo(double x, double y, double rot, VuforiaTrackable relicTrackable){
+
+
+
+        double phoneMax = 34; // this is a made-up value, will have to test to get the real one
+        double phoneMin = -34;
         OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
         double heading = getEuler(pose).get(1);
         VectorF currentTrans = pose.getTranslation();
         double currentx = currentTrans.get(0);
         double currenty = currentTrans.get(1);
+        double cameraAngle = Math.toDegrees(Math.atan2(currenty,currentx)-Math.toRadians(heading));
+        if (cameraAngle < phoneMin){
+            orbitccw();
+        }else if (cameraAngle>phoneMax){
+            orbitcw();
+        }else{
+            noOrbit();
+        }
     }
 
 
@@ -44,6 +57,17 @@ class DriveUsingImage{
         backRight.setPower(br);
         frontLeft.setPower(fl);
         frontRight.setPower(fr);
+    }
+
+    void orbitccw(){
+
+    }
+
+    void orbitcw(){
+
+    }
+    void noOrbit(){
+
     }
 
     void stopDrive() {
