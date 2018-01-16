@@ -109,6 +109,7 @@ public class BlueLeft extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+
             OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
             boolean isVisible = pose != null;
 
