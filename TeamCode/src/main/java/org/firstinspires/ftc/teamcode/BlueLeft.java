@@ -57,7 +57,7 @@ public class BlueLeft extends LinearOpMode {
         rHold = hardwareMap.servo.get("rHold");
         jewel = hardwareMap.servo.get("jewel");
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
-        driver = new DriveUsingImage(frontLeft, frontRight, backLeft, backRight);
+        driver = new DriveUsingImage(frontLeft, frontRight, backLeft, backRight, this);
 
         if (colorSensor instanceof SwitchableLight) {
             ((SwitchableLight)colorSensor).enableLight(true);
@@ -82,7 +82,7 @@ public class BlueLeft extends LinearOpMode {
         waitForStart();
         relicTrackables.activate();
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTrackable);
-        driver.driveTo(100,40000, 27.5, relicTrackable);
+        driver.driveTo(100,40000, 27.5, vuforia);
 
 
         /* = .2;

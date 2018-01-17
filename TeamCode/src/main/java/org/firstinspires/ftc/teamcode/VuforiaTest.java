@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.vuforia.HINT;
 import com.vuforia.Vuforia;
 
@@ -21,9 +23,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 public class VuforiaTest extends LinearOpMode {
 
+    private DriveUsingImage driver;
+    private DcMotor frontLeft, frontRight, backLeft, backRight;
+
     @Override
     public void runOpMode() throws InterruptedException{
         //create vuforia params
+        frontLeft = hardwareMap.dcMotor.get("frontLeft");
+        frontRight = hardwareMap.dcMotor.get("frontRight");
+        backLeft = hardwareMap.dcMotor.get("backLeft");
+        backRight = hardwareMap.dcMotor.get("backRight");
+
+        driver = new DriveUsingImage(frontLeft, frontRight, backLeft, backRight, this);
+
         VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
 
         //set param values
@@ -45,21 +57,24 @@ public class VuforiaTest extends LinearOpMode {
 
         cards.activate();
 
-        while (opModeIsActive()){
-            for (VuforiaTrackable card : cards){
-                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) card.getListener()).getPose();
 
-                if (pose != null){
-                    VectorF translation = pose.getTranslation();
-                    telemetry.addData(card.getName() + "-Translation", translation);
 
-                    double degreesToTurn = Math.toDegrees(Math.atan2(translation.get(1), translation.get(2)));
-                    telemetry.addData(card.getName()+"-Degrees", degreesToTurn);
 
-                }
-            }
-            telemetry.update();
+        VuforiaTrackable three = cards.get(0);
+
+        while (((VuforiaTrackableDefaultListener) three.getListener()).getPose() == null){
+            idle();
         }
+
+
+        while (opModeIsActive()) {
+            driver.driveTo(0, 100, 0, vuforia);
+            telemetry.addData("it stopped!", "oh no!");
+        }
+
+        telemetry.update();
+
+
     }
 
 }

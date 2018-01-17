@@ -1,11 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.vuforia.HINT;
+import com.vuforia.Vuforia;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 class DriveUsingImage{
     private DcMotor backLeft, backRight, frontLeft, frontRight;
@@ -14,18 +22,38 @@ class DriveUsingImage{
     private double orbit = 0;
     private double strafe = 0;
     private double direction = 0;
+    private LinearOpMode opMode;
 
 
 
-    public DriveUsingImage(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight) {
+    public DriveUsingImage(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight, LinearOpMode opMode) {
         this.frontLeft = frontLeft;
         this.backLeft = backLeft;
         this.backRight = backRight;
         this.frontRight = frontRight;
-
+        this.opMode = opMode;
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void driveTo(double x, double z, double rot, VuforiaTrackable relicTrackable){
+    public void driveTo(double x, double z, double rot, VuforiaLocalizer vuforia){
+
+        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4);
+
+        VuforiaTrackables cards = vuforia.loadTrackablesFromAsset("Cards");
+
+        cards.get(0).setName("Three");
+        cards.get(1).setName("Eight");
+        cards.get(2).setName("Five");
+
+
+
+        cards.activate();
+
+
+
+
+        VuforiaTrackable relicTrackable = cards.get(0);
 
 
         OpenGLMatrix pose;
@@ -37,29 +65,56 @@ class DriveUsingImage{
         boolean locationReached = false;
         boolean xNotMet = true;
         boolean yNotMet = true;
+        pose = null;
+        while (pose == null) {
 
-        while (!locationReached){
             pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
-            heading = getEuler(pose).get(1);
-            currentTrans = pose.getTranslation();
-            currentx = currentTrans.get(0);
-            currentz = currentTrans.get(2);
-            lastz = currentz;
-            lastx = currentx;
-            cameraAngle = Math.toDegrees(Math.atan2(currentz,currentx)-Math.toRadians(heading));
+        }
+        currentTrans = pose.getTranslation();
+        currentx = currentTrans.get(0);
+        currentz = currentTrans.get(2);
+        lastz = currentz;
+        lastx = currentx;
+        while (!locationReached && opMode.opModeIsActive()){
 
-            while(xNotMet){
-                if (currentx>x){
-                    if (currentx > x){
-                        if(direction<.33){
-                            direction = direction+.03;
-                        }
-                    }else if (currentx < x) {
-                        if (direction > -0.33) {
-                            direction = direction - .03;
-                        }
-                    }
+
+
+
+
+
+            while(true && opMode.opModeIsActive()){
+
+
+                pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
+                if (pose != null) {
+                    currentTrans = pose.getTranslation();
+                    currentx = currentTrans.get(0);
+                    currentz = currentTrans.get(2);
+                }else {
+                    currentx = 0;
+                    currentz = .200;
                 }
+                if (pose == null){
+                    stopDrive();
+                    break;
+                }
+                heading = getEuler(pose).get(1);
+                cameraAngle = Math.toDegrees(Math.atan2(currentz,currentx)-Math.toRadians(heading));
+
+                if (currentx < x-.005){
+                    if(direction < .33){
+                        direction = direction+.03;
+                    }
+                }else if (currentx > x+.005) {
+                    if (direction > -0.33) {
+                        direction = direction - .03;
+                    }
+                }else if (direction < 0){
+                    direction = direction +.03;
+                }else if(direction > 0){
+                    direction = direction -.03;
+                }
+
 
                 if (cameraAngle<0){
                     if (orbit > -.33){
@@ -72,11 +127,11 @@ class DriveUsingImage{
                     }
                 }
 
-                if (lastz>currentz){
+                if (.030>currentz){
                     if (strafe> -.33){
                         strafe = strafe-.03;
                     }
-                }else if (lastz<currentz){
+                }else if (.030<currentz){
                     if (strafe< .33){
                         strafe = strafe+.03;
                     }
@@ -86,11 +141,23 @@ class DriveUsingImage{
                 lastz = currentz;
                 lastx = currentx;
                 setDrive();
+
+                opMode.telemetry.addData("pose", pose.getTranslation());
+                opMode.telemetry.addData("cameraAngle", cameraAngle);
+                opMode.telemetry.addData("direction", direction);
+                opMode.telemetry.addData("strafe", strafe);
+                opMode.telemetry.addData("orbit", orbit);
+                opMode.telemetry.update();
+
             }
 
-            strafe = 0;
-            direction = 0;
-            setDrive();
+
+            //strafe = 0;
+            //direction = 0;
+            //setDrive();
+            //locationReached = true;
+
+
         }
 
     }
@@ -98,10 +165,12 @@ class DriveUsingImage{
 
 
     private void updateDrive() {
-        backLeft.setPower(bl);
-        backRight.setPower(br);
-        frontLeft.setPower(fl);
-        frontRight.setPower(fr);
+        backLeft.setPower(bl/4);
+        backRight.setPower(br/4);
+        frontLeft.setPower(fl/4);
+        frontRight.setPower(fr/4);
+
+
     }
 
 
@@ -109,14 +178,18 @@ class DriveUsingImage{
 
 
     private void setDrive(){
+        fl = 0;
+        fr = 0;
+        bl = 0;
+        br = 0;
         fl = fl + strafe;
         fr = fr - strafe;
         bl = bl - strafe;
         br = br + strafe;
-        fl = fl + orbit;
-        fr = fr - orbit;
-        bl = bl + orbit;
-        br = br - orbit;
+        fl = fl + orbit*2;
+        fr = fr - orbit*2;
+        bl = bl + orbit*2;
+        br = br - orbit*2;
         fr = fr + direction;
         fl = fl + direction;
         bl = bl + direction;
