@@ -102,13 +102,20 @@ class DriveUsingImage{
                 cameraAngle = Math.toDegrees(Math.atan2(currentz,currentx)-Math.toRadians(heading));
 
                 if (currentx < x-.005){
-                    if(direction < .33){
-                        direction = direction+.03;
+                    if (direction < .33){
+                        direction = direction + .03;
+                    }
+                    if (direction > .33) {
+                        direction = .33;
                     }
                 }else if (currentx > x+.005) {
-                    if (direction > -0.33) {
+                    if (direction > -.33){
                         direction = direction - .03;
                     }
+                    if (direction < -.33) {
+                        direction = -.33;
+                    }
+
                 }else if (direction < 0){
                     direction = direction +.03;
                 }else if(direction > 0){
