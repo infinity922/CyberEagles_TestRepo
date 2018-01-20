@@ -36,7 +36,9 @@ public class BlueLeft extends LinearOpMode {
     private double fr;
     private double bl;
     private double br;
+    private double orbit = 0, strafe = 0, direction = 0;
     private DriveUsingImage driver;
+    private boolean hasFound = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -52,7 +54,7 @@ public class BlueLeft extends LinearOpMode {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        gripper= hardwareMap.get(Servo.class, "gripper");
+        gripper = hardwareMap.get(Servo.class, "gripper");
         rOver = hardwareMap.servo.get("rOver");
         rHold = hardwareMap.servo.get("rHold");
         jewel = hardwareMap.servo.get("jewel");
@@ -60,7 +62,7 @@ public class BlueLeft extends LinearOpMode {
         driver = new DriveUsingImage(frontLeft, frontRight, backLeft, backRight, this);
 
         if (colorSensor instanceof SwitchableLight) {
-            ((SwitchableLight)colorSensor).enableLight(true);
+            ((SwitchableLight) colorSensor).enableLight(true);
         }
 
         //create vuforia params
@@ -79,10 +81,20 @@ public class BlueLeft extends LinearOpMode {
         VuforiaTrackable relicTrackable = relicTrackables.get(0);
         relicTrackable.setName("relicVuMarkTemplate");
 
+
+
         waitForStart();
         relicTrackables.activate();
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTrackable);
-        driver.driveTo(100,40000, 27.5, vuforia);
+        OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
+        strafe = .33;
+        setDrive();
+
+        while (opModeIsActive() && pose!=null){
+            pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
+
+        }
+        driver.driveTo(.010, 4.0000, 27.5, vuforia);
 
 
         /* = .2;
@@ -100,69 +112,56 @@ public class BlueLeft extends LinearOpMode {
         bl = .2;
         updateDrive();*/
 
-        boolean hasSeen = false;
-        boolean step1 = false;
-
-        float xTrans;
-        float yTrans;
-        float heading = 99999;
-
-        while (opModeIsActive()) {
 
 
-            OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
-            boolean isVisible = pose != null;
 
-            if (!hasSeen && isVisible) {
-                hasSeen = true;
-            }
-            else if (hasSeen && !isVisible) {
-                break;
-            }
 
-            /*if (hasSeen && !step1){
-                sleep(200);
-                stopDrive();
-                step1 = true;
-            }*/
 
-            if (isVisible) {
-                heading = getEuler(pose).get(1);
 
-            }
-            telemetry.addData("trackable", vuMark);telemetry.update();
-            telemetry.addData("trans", pose != null ? pose.getTranslation() : "INVISIBLE");
-            telemetry.addData("angle", heading);
 
-        }
 
+
+    }
+    private void updateDrive() {
+        backLeft.setPower(bl/4);
+        backRight.setPower(br/4);
+        frontLeft.setPower(fl/4);
+        frontRight.setPower(fr/4);
 
 
     }
 
 
 
-    static VectorF getEuler(OpenGLMatrix pose) {
-        double heading, pitch, roll;
 
-        // Assuming the angles are in radians.
-        if (pose.get(1, 0) > 0.998) { // singularity at north pole
-            heading = Math.atan2(pose.get(0, 2), pose.get(2, 2));
-            pitch = Math.PI/2;
-            roll = 0;
-        }
-        else if (pose.get(1, 0) < -0.998) { // singularity at south pole
-            heading = Math.atan2(pose.get(0, 2), pose.get(2, 2));
-            pitch = -Math.PI/2;
-            roll = 0;
-        }
-        else {
-            heading = Math.atan2(pose.get(2, 0), pose.get(0, 0));
-            pitch = Math.atan2(-pose.get(1, 2), pose.get(1, 1));
-            roll = Math.asin(pose.get(1, 0));
-        }
 
-        return new VectorF((float) Math.toDegrees(roll), (float) Math.toDegrees(heading), (float) Math.toDegrees(pitch));
+    private void setDrive(){
+        fl = 0;
+        fr = 0;
+        bl = 0;
+        br = 0;
+        fl = fl + strafe;
+        fr = fr - strafe;
+        bl = bl - strafe;
+        br = br + strafe;
+        fl = fl + orbit;
+        fr = fr - orbit;
+        bl = bl + orbit;
+        br = br - orbit;
+        fr = fr + direction;
+        fl = fl + direction;
+        bl = bl + direction;
+        br = br + direction;
+        updateDrive();
+    }
+
+
+
+    private void stopDrive() {
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
     }
 
 

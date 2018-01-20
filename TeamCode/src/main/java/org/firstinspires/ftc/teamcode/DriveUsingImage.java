@@ -26,6 +26,7 @@ class DriveUsingImage{
 
 
 
+
     public DriveUsingImage(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight, LinearOpMode opMode) {
         this.frontLeft = frontLeft;
         this.backLeft = backLeft;
@@ -40,20 +41,14 @@ class DriveUsingImage{
 
         Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4);
 
-        VuforiaTrackables cards = vuforia.loadTrackablesFromAsset("Cards");
-
-        cards.get(0).setName("Three");
-        cards.get(1).setName("Eight");
-        cards.get(2).setName("Five");
-
-
-
-        cards.activate();
+        VuforiaTrackables relicTrackables = vuforia.loadTrackablesFromAsset("RelicVuMark");
+        VuforiaTrackable relicTrackable = relicTrackables.get(0);
+        relicTrackables.activate();
 
 
 
 
-        VuforiaTrackable relicTrackable = cards.get(0);
+
 
 
         OpenGLMatrix pose;
@@ -61,10 +56,11 @@ class DriveUsingImage{
         VectorF currentTrans;
         double currentx, lastx;
         double currentz, lastz;
-        double cameraAngle;
+        double cameraAngle = 10000;
         boolean locationReached = false;
+        boolean rotNotReached = true;
         boolean xNotMet = true;
-        boolean yNotMet = true;
+        boolean zNotMet = true;
         pose = null;
         while (pose == null) {
 
@@ -82,7 +78,7 @@ class DriveUsingImage{
 
 
 
-            while(true && opMode.opModeIsActive()){
+            while(xNotMet && opMode.opModeIsActive()){
 
 
                 pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
@@ -90,67 +86,137 @@ class DriveUsingImage{
                     currentTrans = pose.getTranslation();
                     currentx = currentTrans.get(0);
                     currentz = currentTrans.get(2);
-                }else {
-                    currentx = 0;
-                    currentz = .200;
-                }
-                if (pose == null){
-                    stopDrive();
-                    break;
-                }
-                heading = getEuler(pose).get(1);
-                cameraAngle = Math.toDegrees(Math.atan2(currentz,currentx)-Math.toRadians(heading));
+                    heading = getEuler(pose).get(1);
+                    cameraAngle = Math.toDegrees(Math.atan2(currentz,currentx)-Math.toRadians(heading));
 
-                if (currentx < x-.005){
-                    if (direction < .33){
-                        direction = direction + .03;
-                    }
-                    if (direction > .33) {
-                        direction = .33;
-                    }
-                }else if (currentx > x+.005) {
-                    if (direction > -.33){
-                        direction = direction - .03;
-                    }
-                    if (direction < -.33) {
-                        direction = -.33;
+                    if (currentx < x-.005){
+                        if (direction < .33){
+                            direction = direction + .03;
+                        }
+                        if (direction > .33) {
+                            direction = .33;
+                        }
+                    }else if (currentx > x+.005) {
+                        if (direction > -.33){
+                            direction = direction - .03;
+                        }
+                        if (direction < -.33) {
+                            direction = -.33;
+                        }
+
+                    }else if (direction < 0){
+                        direction = direction +.03;
+                    }else if(direction > 0){
+                        direction = direction -.03;
                     }
 
-                }else if (direction < 0){
-                    direction = direction +.03;
-                }else if(direction > 0){
-                    direction = direction -.03;
-                }
 
+                    if (cameraAngle<0){
+                        if (orbit > -.33){
+                            orbit = orbit-0.03;
+                        }
 
-                if (cameraAngle<0){
-                    if (orbit > -.33){
-                        orbit = orbit-0.03;
+                    }else if (cameraAngle>0){
+                        if (orbit < .33){
+                            orbit = orbit+.03;
+                        }
                     }
 
-                }else if (cameraAngle>0){
-                    if (orbit < .33){
-                        orbit = orbit+.33;
+                    if (lastz>currentz){
+                        if (strafe> -.33){
+                            strafe = strafe-.03;
+                        }
+                    }else if (lastz<currentz){
+                        if (strafe< .33){
+                            strafe = strafe+.03;
+                        }
                     }
-                }
 
-                if (.030>currentz){
-                    if (strafe> -.33){
-                        strafe = strafe-.03;
-                    }
-                }else if (.030<currentz){
-                    if (strafe< .33){
-                        strafe = strafe+.03;
-                    }
+                    if(currentx<x+0.005 && currentx> x-0.005)xNotMet = false;
+                    lastz = currentz;
+                    lastx = currentx;
+                    setDrive();
                 }
 
-                if(currentx<x+5 && currentx> x-5)xNotMet = false;
-                lastz = currentz;
-                lastx = currentx;
-                setDrive();
 
-                opMode.telemetry.addData("pose", pose.getTranslation());
-                opMode.telemetry.addData("cameraAngle", cameraAngle);
+
+
+
+                opMode.telemetry.addData("pose",(pose != null ? pose.getTranslation() : "INVISIBLE"));
+                opMode.telemetry.addData("cameraAngle",cameraAngle);
+                opMode.telemetry.addData("direction", direction);
+                opMode.telemetry.addData("strafe", strafe);
+                opMode.telemetry.addData("orbit", orbit);
+                opMode.telemetry.update();
+
+
+            }
+            while (!xNotMet && zNotMet){
+
+
+                pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
+                if (pose != null) {
+                    currentTrans = pose.getTranslation();
+                    currentx = currentTrans.get(0);
+                    currentz = currentTrans.get(2);
+                    heading = getEuler(pose).get(1);
+                    cameraAngle = Math.toDegrees(Math.atan2(currentz,currentx)-Math.toRadians(heading));
+
+                    if (currentx < lastx){
+                        if (direction < .33){
+                            direction = direction + .03;
+                        }
+                        if (direction > .33) {
+                            direction = .33;
+                        }
+                    }else if (currentx > lastx) {
+                        if (direction > -.33){
+                            direction = direction - .03;
+                        }
+                        if (direction < -.33) {
+                            direction = -.33;
+                        }
+
+                    }else if (direction < 0){
+                        direction = direction +.03;
+                    }else if(direction > 0){
+                        direction = direction -.03;
+                    }
+
+
+                    if (cameraAngle<0){
+                        if (orbit > -.33){
+                            orbit = orbit-0.03;
+                        }
+
+                    }else if (cameraAngle>0){
+                        if (orbit < .33){
+                            orbit = orbit+.03;
+                        }
+                    }
+
+                    if (z+.005>currentz){
+                        if (strafe> -.33){
+                            strafe = strafe-.03;
+                        }
+                    }else if (z-.005<currentz){
+                        if (strafe< .33){
+                            strafe = strafe+.03;
+                        }
+                    }
+
+                    if(currentx<x+0.005 && currentx> x-0.005)xNotMet = false;
+                    lastz = currentz;
+                    lastx = currentx;
+                    setDrive();
+                }
+
+
+
+
+
+                opMode.telemetry.addData("pose",(pose != null ? pose.getTranslation() : "INVISIBLE"));
+                opMode.telemetry.addData("cameraAngle",cameraAngle);
                 opMode.telemetry.addData("direction", direction);
                 opMode.telemetry.addData("strafe", strafe);
                 opMode.telemetry.addData("orbit", orbit);
@@ -164,6 +230,10 @@ class DriveUsingImage{
             //setDrive();
             //locationReached = true;
 
+
+        }
+
+        while (rotNotReached) {
 
         }
 
@@ -193,10 +263,10 @@ class DriveUsingImage{
         fr = fr - strafe;
         bl = bl - strafe;
         br = br + strafe;
-        fl = fl + orbit*2;
-        fr = fr - orbit*2;
-        bl = bl + orbit*2;
-        br = br - orbit*2;
+        fl = fl + orbit;
+        fr = fr - orbit;
+        bl = bl + orbit;
+        br = br - orbit;
         fr = fr + direction;
         fl = fl + direction;
         bl = bl + direction;

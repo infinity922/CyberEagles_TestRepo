@@ -41,6 +41,7 @@ public class TeleOp extends OpMode {
             glyphControl();
             mecanumDrive();
             relicMechanism();
+            extender();
         }
         @Override
         public void stop(){
@@ -135,6 +136,6 @@ public class TeleOp extends OpMode {
         }
 
         private void extender (){
-            armOut.setPower(0);
+            armOut.setPower(gamepad2.right_stick_y/2);
         }
     }
