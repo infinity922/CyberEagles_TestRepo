@@ -29,8 +29,8 @@ public class TeleOp extends OpMode {
 
             gripper.setPosition(0);
 
-            //  grabArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            //  grabArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            grabArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            grabArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -41,7 +41,6 @@ public class TeleOp extends OpMode {
             glyphControl();
             mecanumDrive();
             relicMechanism();
-            extender();
         }
         @Override
         public void stop(){
@@ -52,8 +51,8 @@ public class TeleOp extends OpMode {
             backLeft.setPower(0);
         }
         private void relicMechanism(){
-            if (gamepad2.left_bumper) armOut.setPower(.5);
-            if (gamepad2.right_bumper) armIn.setPower(.5);
+            if (gamepad2.left_bumper) armOut.setPower(-gamepad2.right_stick_y);
+            if (gamepad2.right_bumper) armIn.setPower(-gamepad2.left_stick_y);
             if (gamepad2.left_bumper){
                 if (gamepad2.a) rHold.setPosition(0);
                 if (gamepad2.b) rHold.setPosition(1);
@@ -133,9 +132,5 @@ public class TeleOp extends OpMode {
                 backLeft.setPower(bl);
                 backRight.setPower(br);
             }
-        }
-
-        private void extender (){
-            armOut.setPower(gamepad2.right_stick_y/2);
         }
     }
