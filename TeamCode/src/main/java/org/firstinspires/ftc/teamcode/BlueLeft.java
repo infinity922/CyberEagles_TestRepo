@@ -96,31 +96,6 @@ public class BlueLeft extends LinearOpMode {
         }
         driver.driveTo(.010, 4.0000, 27.5, vuforia);
 
-
-        /* = .2;
-        fl = .2;
-        bl = .2;
-        br = .2;
-        updateDrive();
-        sleep(2000);
-        stopDrive();
-
-        boolean found = false;
-        fr = -.2;
-        fl = .2;
-        br = -.2;
-        bl = .2;
-        updateDrive();*/
-
-
-
-
-
-
-
-
-
-
     }
     private void updateDrive() {
         backLeft.setPower(bl/4);

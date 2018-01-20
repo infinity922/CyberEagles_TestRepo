@@ -52,7 +52,7 @@ class DriveUsingImage{
 
 
         OpenGLMatrix pose;
-        double heading;
+        double heading = 0;
         VectorF currentTrans;
         double currentx, lastx;
         double currentz, lastz;
@@ -151,7 +151,7 @@ class DriveUsingImage{
 
 
             }
-            while (!xNotMet && zNotMet){
+            while (!xNotMet && zNotMet&& opMode.opModeIsActive()){
 
 
                 pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
@@ -205,7 +205,7 @@ class DriveUsingImage{
                         }
                     }
 
-                    if(currentx<x+0.005 && currentx> x-0.005)xNotMet = false;
+                    if(currentz<z+0.005 && currentz> z-0.005)zNotMet = false;
                     lastz = currentz;
                     lastx = currentx;
                     setDrive();
@@ -222,22 +222,46 @@ class DriveUsingImage{
                 opMode.telemetry.addData("orbit", orbit);
                 opMode.telemetry.update();
 
+
             }
 
 
-            //strafe = 0;
-            //direction = 0;
-            //setDrive();
-            //locationReached = true;
+            strafe = 0;
+            direction = 0;
+            orbit = 0;
+            setDrive();
+            locationReached = true;
 
 
         }
 
-        while (rotNotReached) {
+        while (rotNotReached && opMode.opModeIsActive()) {
+            pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
+            if(pose != null){
+                heading = getEuler(pose).get(1);
+                if (heading<rot+.005) {
+                    if (orbit<.33){
+                        orbit = orbit+.03;
+                    }
+                }
+                if (heading>rot-.005){
+                    if (orbit>-.33){
+                        orbit = orbit-.33;
+                    }
+                }
 
+                if (heading<rot+.005&&heading>rot-.005){
+                    rotNotReached = false;
+                }
+            }
         }
+        stopDrive();
+
+
 
     }
+
+
 
 
 
