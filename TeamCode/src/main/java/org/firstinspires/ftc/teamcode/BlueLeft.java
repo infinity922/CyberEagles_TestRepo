@@ -31,7 +31,7 @@ public class BlueLeft extends LinearOpMode {
     private DcMotor backRight;
     private DcMotor grabber, armIn, armOut = null;
     private Servo gripper, rOver, rHold, jewel = null;
-    private ColorSensor colorSensor = null;
+    //private ColorSensor colorSensor = null;
     private double fl;
     private double fr;
     private double bl;
@@ -58,12 +58,11 @@ public class BlueLeft extends LinearOpMode {
         rOver = hardwareMap.servo.get("rOver");
         rHold = hardwareMap.servo.get("rHold");
         jewel = hardwareMap.servo.get("jewel");
-        colorSensor = hardwareMap.colorSensor.get("colorSensor");
+        //colorSensor = hardwareMap.colorSensor.get("colorSensor");
         driver = new DriveUsingImage(frontLeft, frontRight, backLeft, backRight, this);
 
-        if (colorSensor instanceof SwitchableLight) {
-            ((SwitchableLight) colorSensor).enableLight(true);
-        }
+        //if (colorSensor instanceof SwitchableLight) {
+        //    ((SwitchableLight) colorSensor).enableLight(true);}
 
         //create vuforia params
         VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);

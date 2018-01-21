@@ -8,10 +8,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class TeleOp extends OpMode {
         private DcMotor grabArm, frontLeft, frontRight, backLeft, backRight, armOut, armIn = null;
-        private Servo gripper, rHold, rOver, jewel;
+        private Servo gripper, rHold, rOver, jewel, lArm, rArm;
 
         //variables to store motor values to prevent stuttering
-        private double fl, fr, bl, br;
+        private double fl, fr, bl, br, step;
+        private boolean xpressed,xreleased,ypressed,yreleased= false;
 
         @Override
         public void init(){
@@ -25,6 +26,8 @@ public class TeleOp extends OpMode {
             armIn = hardwareMap.dcMotor.get("armIn");
             rHold = hardwareMap.servo.get("rHold");
             rOver = hardwareMap.servo.get("rOver");
+            lArm = hardwareMap.servo.get("lArm");
+            rArm = hardwareMap.servo.get("rArm");
 
 
             gripper.setPosition(0);
@@ -51,8 +54,7 @@ public class TeleOp extends OpMode {
             backLeft.setPower(0);
         }
         private void relicMechanism(){
-            if (gamepad2.left_bumper) armOut.setPower(-gamepad2.right_stick_y);
-            if (gamepad2.right_bumper) armIn.setPower(-gamepad2.left_stick_y);
+            if (gamepad2.left_bumper) {armIn.setPower(-gamepad2.left_stick_y); armOut.setPower(gamepad2.left_stick_y);}
             if (gamepad2.left_bumper){
                 if (gamepad2.a) rHold.setPosition(0);
                 if (gamepad2.b) rHold.setPosition(1);
@@ -67,17 +69,28 @@ public class TeleOp extends OpMode {
             //min Position = 0
             //max Position = 543
 
+            if (gamepad2.dpad_up) xpressed = true;
+            if (xpressed && !gamepad2.dpad_up) xreleased = true;
+            if (gamepad2.dpad_down) ypressed = true;
+            if (ypressed && !gamepad2.dpad_down) yreleased = true;
+
+            if ((xpressed && xreleased) && (step<=3)) {step +=.25;xpressed = false; xreleased = false;}
+            if ((ypressed &&yreleased) && (step>=0)){step -=.25;ypressed = false; yreleased= false;}
+            double target = (step/3)*543;
+            grabArm.setTargetPosition((int)target);
+
             // use this if encoders can be used
-             grabArm.setTargetPosition((int)(-gamepad2.left_stick_y*543));
+             //grabArm.setTargetPosition((int)(-gamepad2.left_stick_y*543));
               grabArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
               grabArm.setPower(.75);
             //refine this:
             //grabArm.setPower(-gamepad2.right_stick_y/2);
             if (gamepad2.a) gripper.setPosition(1);
             if (gamepad2.b) gripper.setPosition(0);
-            /*
-             * think about using a stage system too for the glyph arm
-             */
+
+            lArm.setPosition((1-gamepad2.left_trigger));
+            rArm.setPosition((1-gamepad2.left_trigger));
+
         }
         private void mecanumDrive(){
             //this part does front, back, left and right from gamepad1.left_stick
