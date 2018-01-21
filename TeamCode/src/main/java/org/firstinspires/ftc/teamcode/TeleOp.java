@@ -30,10 +30,10 @@ public class TeleOp extends OpMode {
             rArm = hardwareMap.servo.get("rArm");
 
 
-            gripper.setPosition(0);
+            gripper.setPosition(1);
 
-            grabArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             grabArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            grabArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -55,6 +55,7 @@ public class TeleOp extends OpMode {
         }
         private void relicMechanism(){
             if (gamepad2.left_bumper) {armIn.setPower(-gamepad2.left_stick_y); armOut.setPower(gamepad2.left_stick_y);}
+            if (!gamepad2.left_bumper) {armOut.setPower(0);armIn.setPower(0);}
             if (gamepad2.left_bumper){
                 if (gamepad2.a) rHold.setPosition(0);
                 if (gamepad2.b) rHold.setPosition(1);
@@ -70,26 +71,34 @@ public class TeleOp extends OpMode {
             //max Position = 543
 
             if (gamepad2.dpad_up) xpressed = true;
-            if (xpressed && !gamepad2.dpad_up) xreleased = true;
+            if (xpressed && (!gamepad2.dpad_up)) xreleased = true;
             if (gamepad2.dpad_down) ypressed = true;
-            if (ypressed && !gamepad2.dpad_down) yreleased = true;
+            if (ypressed && (!gamepad2.dpad_down)) yreleased = true;
 
-            if ((xpressed && xreleased) && (step<=3)) {step +=.25;xpressed = false; xreleased = false;}
-            if ((ypressed &&yreleased) && (step>=0)){step -=.25;ypressed = false; yreleased= false;}
-            double target = (step/3)*543;
-            grabArm.setTargetPosition((int)target);
+            if ((xpressed && xreleased) && (step<3)) {step++;xpressed = false; xreleased = false;}
+            if ((ypressed && yreleased) && (step>0)){step--;ypressed = false; yreleased= false;}
+            double target = ((step/3)*543);
+            int itarget = (int)target;
 
+
+            grabArm.setTargetPosition(itarget);
             // use this if encoders can be used
              //grabArm.setTargetPosition((int)(-gamepad2.left_stick_y*543));
               grabArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-              grabArm.setPower(.75);
+              grabArm.setPower(.9);
             //refine this:
             //grabArm.setPower(-gamepad2.right_stick_y/2);
             if (gamepad2.a) gripper.setPosition(1);
             if (gamepad2.b) gripper.setPosition(0);
 
-            lArm.setPosition((1-gamepad2.left_trigger));
-            rArm.setPosition((1-gamepad2.left_trigger));
+            double lArmPos = 1-gamepad2.left_trigger;
+            double rArmPos = gamepad2.left_trigger;
+            if (lArmPos < .2) lArmPos = .2;
+            if (rArmPos > .8) lArmPos = .8;
+            lArm.setPosition(lArmPos);
+            rArm.setPosition(rArmPos);
+            telemetry.addData("ltrigger", gamepad2.left_trigger);
+            telemetry.update();
 
         }
         private void mecanumDrive(){
