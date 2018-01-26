@@ -93,13 +93,10 @@ public class TeleOp extends OpMode {
 
             double lArmPos = 1-gamepad2.left_trigger;
             double rArmPos = gamepad2.left_trigger;
-            if (lArmPos < .2) lArmPos = .2;
-            if (rArmPos > .8) lArmPos = .8;
+            if (lArmPos > .8) lArmPos = .8;
+            if (rArmPos < .2) rArmPos = .2;
             lArm.setPosition(lArmPos);
             rArm.setPosition(rArmPos);
-            telemetry.addData("ltrigger", gamepad2.left_trigger);
-            telemetry.update();
-
         }
         private void mecanumDrive(){
             //this part does front, back, left and right from gamepad1.left_stick
