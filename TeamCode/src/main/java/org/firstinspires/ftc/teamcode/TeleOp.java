@@ -12,6 +12,8 @@ public class TeleOp extends OpMode {
 
         //variables to store motor values to prevent stuttering
         private double fl, fr, bl, br, step;
+        private double holdPos= 0.5;
+        private double overPos = 0;
         private boolean xpressed,xreleased,ypressed,yreleased= false;
 
         @Override
@@ -29,12 +31,10 @@ public class TeleOp extends OpMode {
             lArm = hardwareMap.servo.get("lArm");
             rArm = hardwareMap.servo.get("rArm");
 
-
-            gripper.setPosition(1);
-
+            //run the arm motor with encoders
             grabArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             grabArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+            //set proper directions for drive
             frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -52,17 +52,24 @@ public class TeleOp extends OpMode {
             frontRight.setPower(0);
             backRight.setPower(0);
             backLeft.setPower(0);
+            armIn.setPower(0);
+            armOut.setPower(0);
         }
         private void relicMechanism(){
+            //this does the in and out motion of the linear slides
             if (gamepad2.left_bumper) {armIn.setPower(-gamepad2.left_stick_y); armOut.setPower(gamepad2.left_stick_y);}
             if (!gamepad2.left_bumper) {armOut.setPower(0);armIn.setPower(0);}
+            //This controls the servos at the end of the linear slides
             if (gamepad2.left_bumper){
-                if (gamepad2.a) rHold.setPosition(0);
-                if (gamepad2.b) rHold.setPosition(1);
-                if (gamepad2.x) rOver.setPosition(0);
-                if (gamepad2.y) rOver.setPosition(1);
-            }
-        }
+                if (gamepad2.a) {
+                    if (holdPos >0){holdPos -= .02;rHold.setPosition(holdPos);}}
+                if (gamepad2.b){
+                    if (holdPos <1){holdPos += .02;rHold.setPosition(holdPos);}}
+                if (gamepad2.x) {
+                    if (holdPos >0){overPos -= .02;rOver.setPosition(overPos);}}
+                if (gamepad2.y) {
+                    if (holdPos <1){overPos += .02;rOver.setPosition(overPos);}}
+        }}
         private void glyphControl(){
             /*
              * think about using a stage system too for the glyph arm
@@ -91,10 +98,12 @@ public class TeleOp extends OpMode {
             if (gamepad2.a) gripper.setPosition(1);
             if (gamepad2.b) gripper.setPosition(0);
 
-            double lArmPos = 1-gamepad2.left_trigger;
+            double lArmPos = gamepad2.left_trigger;
             double rArmPos = gamepad2.left_trigger;
-            if (lArmPos > .8) lArmPos = .8;
             if (rArmPos < .2) rArmPos = .2;
+            if (lArmPos < .3) lArmPos = .3;
+            if (rArmPos > .8) rArmPos=.8;
+            if (lArmPos > .8) lArmPos=.8;
             lArm.setPosition(lArmPos);
             rArm.setPosition(rArmPos);
         }
@@ -141,15 +150,15 @@ public class TeleOp extends OpMode {
             //this sends the variables to the motors
             //with a slow mode
             if (gamepad1.right_trigger!=0){
+                frontLeft.setPower((fl/2)*(gamepad1.right_trigger+1));
+                frontRight.setPower((fr/2)*(gamepad1.right_trigger+1));
+                backLeft.setPower((bl/2)*(gamepad1.right_trigger+1));
+                backRight.setPower((br/2)*(gamepad1.right_trigger+1));
+            }else {
                 frontLeft.setPower(fl/2);
                 frontRight.setPower(fr/2);
                 backLeft.setPower(bl/2);
                 backRight.setPower(br/2);
-            }else {
-                frontLeft.setPower(fl);
-                frontRight.setPower(fr);
-                backLeft.setPower(bl);
-                backRight.setPower(br);
             }
         }
     }
