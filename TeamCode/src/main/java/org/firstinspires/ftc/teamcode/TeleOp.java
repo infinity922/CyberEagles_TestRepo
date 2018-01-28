@@ -13,8 +13,9 @@ public class TeleOp extends OpMode {
         //variables to store motor values to prevent stuttering
         private double fl, fr, bl, br, step;
         private double holdPos= 0.5;
-        private double overPos = 0;
-        private boolean xpressed,xreleased,ypressed,yreleased= false;
+        private double overPos= 0;
+        int extra = 0;
+        private boolean lpressed,lreleased,rpressed,rreleased, upressed, urel, dpressed, drel= false;
 
         @Override
         public void init(){
@@ -65,10 +66,10 @@ public class TeleOp extends OpMode {
                     if (holdPos >0){holdPos -= .02;rHold.setPosition(holdPos);}}
                 if (gamepad2.b){
                     if (holdPos <1){holdPos += .02;rHold.setPosition(holdPos);}}
-                if (gamepad2.x) {
-                    if (holdPos >0){overPos -= .02;rOver.setPosition(overPos);}}
-                if (gamepad2.y) {
-                    if (holdPos <1){overPos += .02;rOver.setPosition(overPos);}}
+                if (gamepad2.x) {rOver.setPosition(0);}
+                else {rOver.setPosition(0.45);}
+            telemetry.addData("overPos", overPos);
+            telemetry.update();
         }}
         private void glyphControl(){
             /*
@@ -77,22 +78,32 @@ public class TeleOp extends OpMode {
             //min Position = 0
             //max Position = 543
 
-            if (gamepad2.dpad_up) xpressed = true;
-            if (xpressed && (!gamepad2.dpad_up)) xreleased = true;
-            if (gamepad2.dpad_down) ypressed = true;
-            if (ypressed && (!gamepad2.dpad_down)) yreleased = true;
+            if (gamepad2.dpad_up) upressed = true;
+            if (upressed && (!gamepad2.dpad_up))urel = true;
+            if (gamepad2.dpad_down) dpressed = true;
+            if (dpressed && (!gamepad2.dpad_down)) drel = true;
 
-            if ((xpressed && xreleased) && (step<3)) {step++;xpressed = false; xreleased = false;}
-            if ((ypressed && yreleased) && (step>0)){step--;ypressed = false; yreleased= false;}
+            //alternate stepping method
+
+            if (gamepad2.dpad_left) lpressed = true;
+            if (lpressed && (!gamepad2.dpad_left)) lreleased = true;
+            if (gamepad2.dpad_right) rpressed = true;
+            if (rpressed && (!gamepad2.dpad_right)) rreleased = true;
+
+            if ((upressed && urel) && (step<3)) {step++;upressed = false; urel= false;}
+            if ((dpressed && drel) && (step>0)){step--;dpressed = false; drel= false;}
+            if (lpressed && lreleased) {lpressed = false; lreleased = false; extra = 0;}
+            if (rpressed && rreleased) {rpressed = false; rreleased = false; extra = 100;}
             double target = ((step/3)*543);
-            int itarget = (int)target;
+            int itarget = ((int)target + extra);
+            if (itarget > 543) itarget = 543;
 
 
             grabArm.setTargetPosition(itarget);
             // use this if encoders can be used
              //grabArm.setTargetPosition((int)(-gamepad2.left_stick_y*543));
               grabArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-              grabArm.setPower(.9);
+              grabArm.setPower(1);
             //refine this:
             //grabArm.setPower(-gamepad2.right_stick_y/2);
             if (gamepad2.a) gripper.setPosition(1);
@@ -102,8 +113,8 @@ public class TeleOp extends OpMode {
             double rArmPos = gamepad2.left_trigger;
             if (rArmPos < .2) rArmPos = .2;
             if (lArmPos < .3) lArmPos = .3;
-            if (rArmPos > .8) rArmPos=.8;
-            if (lArmPos > .8) lArmPos=.8;
+            if (rArmPos > .7) rArmPos=.7;
+            if (lArmPos > .7) lArmPos=.7;
             lArm.setPosition(lArmPos);
             rArm.setPosition(rArmPos);
         }
