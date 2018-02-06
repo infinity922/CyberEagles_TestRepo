@@ -72,6 +72,8 @@ public class TeleOp extends OpMode {
             telemetry.update();
         }}
         private void glyphControl(){
+            //reset encoders
+            if (gamepad2.right_bumper){grabArm.setPower(0);grabArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);}
             /*
              * think about using a stage system too for the glyph arm
              */
