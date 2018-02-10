@@ -83,17 +83,31 @@ public class BlueLeft extends LinearOpMode {
 
 
         waitForStart();
+        telemetry.addData("started", "true");
+        telemetry.update();
         relicTrackables.activate();
+        telemetry.addData("activated", true);
+        telemetry.update();
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTrackable);
+        telemetry.addData("1",true);
+        telemetry.update();
         OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
+        telemetry.addData("2", true);
+        telemetry.update();
         strafe = .33;
+        telemetry.addData("3",true);
+        telemetry.update();
         setDrive();
+        telemetry.addData("3",true);
+        telemetry.update();
 
         while (opModeIsActive() && pose!=null){
             pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
 
         }
-        driver.driveTo(.010, 4.0000, 27.5, vuforia);
+        telemetry.addData("driver called", true);
+        telemetry.update();
+        driver.driveTo(0, 400, 27.5, vuforia,relicTrackables,relicTrackable);
 
     }
     private void updateDrive() {
