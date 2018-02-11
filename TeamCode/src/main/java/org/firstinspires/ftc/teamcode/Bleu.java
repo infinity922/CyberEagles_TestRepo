@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.vuforia.HINT;
 import com.vuforia.Vuforia;
@@ -23,6 +24,7 @@ import java.util.List;
 @Autonomous
 public class Bleu extends LinearOpMode {
     private DcMotor fL, fR, bR, bL;
+    private Servo jewel;
     private double fr, fl, br, bl, extra, orbit, direction, strafe;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -31,10 +33,11 @@ public class Bleu extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException{
         //init code
-        fR = hardwareMap.dcMotor.get("fR");
-        fL = hardwareMap.dcMotor.get("fL");
-        bR = hardwareMap.dcMotor.get("bR");
-        bL = hardwareMap.dcMotor.get("bL");
+        fR = hardwareMap.dcMotor.get("frontRight");
+        fL = hardwareMap.dcMotor.get("frontLeft");
+        bR = hardwareMap.dcMotor.get("backRight");
+        bL = hardwareMap.dcMotor.get("backLeft");
+        jewel = hardwareMap.servo.get("jewel");
 
         //vuforia init code
         VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
@@ -94,5 +97,4 @@ public class Bleu extends LinearOpMode {
         bL.setPower(0);
         bR.setPower(0);
     }
-
 }

@@ -38,7 +38,6 @@ public class TeleOp extends OpMode {
             //set proper directions for drive
             frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
         }
         @Override
         public void loop(){
