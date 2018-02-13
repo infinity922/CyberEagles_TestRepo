@@ -29,6 +29,8 @@ public class Rouge extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ColorSensor csensor;
 
+    private int initBlue, initRed, colorMax = 128, blueaverage, redaverage;
+
     @Override
     public void runOpMode() throws InterruptedException{
         initCode();
@@ -84,26 +86,48 @@ public class Rouge extends LinearOpMode {
         glyphArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         glyphArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        //get ambient light readings
+        for(int i=0; i < 5; i++) {
+            initBlue += csensor.blue();
+            initRed += csensor.red();
+
+            idle();
+        }
+
+        initBlue = initBlue/5;
+        initRed = initRed/5;
+
     }
     private void doJewel(){
         double revDirection=0;
         jewel.setPosition(0);
-        //how to check if the jewel is red or blue --- then take the appropriate action.
-        /**
-         * rethink this logic after seeing how the jewel arm works.
-         */
-        if (csensor.red()>csensor.blue()){
+
+        //detect jewel color average
+        for(int i = 0; i < 5; i++) {
+            if ((csensor.blue() * colorMax ) / initBlue > (csensor.red() * colorMax) / initRed) {
+                blueaverage++;
+            }
+            else if ((csensor.red() * colorMax ) / initRed > (csensor.blue() * colorMax) / initBlue) {
+                redaverage++;
+            }
+            idle();
+        }
+
+        //carry out according action
+        if (redaverage>blueaverage){
             setDrive(0,0,1,.5);
             revDirection = -1;
+            telemetry.addData("Jewel Status: ", "red");
         }
-        else if (csensor.blue()>csensor.red()) {
+        else if (blueaverage>redaverage) {
             setDrive(0, 0, -1, .5);
             revDirection = 1;
+            telemetry.addData("Jewel Status: ", "blue");
         }
         else {
             telemetry.addData("Jewel Status: ", "not determined");
-            telemetry.update();
         }
+        telemetry.update();
 
         jewel.setPosition(1);
 
@@ -111,6 +135,9 @@ public class Rouge extends LinearOpMode {
         setDrive(0,0,revDirection,.5);
 
     }
+
+
+
     private void placeGlyph(){
         setDrive(0,0,1,1.2+extra);
         //turn towards box

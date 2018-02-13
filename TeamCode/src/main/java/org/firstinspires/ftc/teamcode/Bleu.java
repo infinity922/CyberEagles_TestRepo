@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by Thursday on 2/8/2018.
  */
-@Autonomous
+//@Autonomous
 public class Bleu extends LinearOpMode {
     private DcMotor fL, fR, bR, bL;
     private Servo jewel;
