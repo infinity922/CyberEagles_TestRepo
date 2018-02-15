@@ -37,9 +37,11 @@ public class TeleOp extends OpMode {
 
             //set proper directions for drive
             frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+            frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
             backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             liftnTilt.setDirection(DcMotorSimple.Direction.REVERSE);
-            rightWheel.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightWheel.setDirection(DcMotorSimple.Direction.FORWARD);
+            leftWheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         }
@@ -60,7 +62,7 @@ public class TeleOp extends OpMode {
             backLeft.setPower(0);
             leftWheel.setPower(0);
             rightWheel.setPower(0);
-            armOut.setPower(0);
+            //armOut.setPower(0);
         }
         /*private void relicMechanism(){
             //this does the in and out motion of the linear slides
@@ -105,10 +107,10 @@ public class TeleOp extends OpMode {
         }
         private void mecanumDrive(){
             //this part does front, back, left and right from gamepad1.left_stick
-            fl = gamepad1.left_stick_y + gamepad1.left_stick_x;
-            fr = gamepad1.left_stick_y - gamepad1.left_stick_x;
-            bl = gamepad1.left_stick_y - gamepad1.left_stick_x;
-            br = gamepad1.left_stick_y + gamepad1.left_stick_x;
+            fl = gamepad1.left_stick_y - gamepad1.left_stick_x;
+            fr = gamepad1.left_stick_y + gamepad1.left_stick_x;
+            bl = gamepad1.left_stick_y + gamepad1.left_stick_x;
+            br = gamepad1.left_stick_y - gamepad1.left_stick_x;
 
             //this part does swiveling
             if (fl - gamepad1.right_stick_x > 1) {
