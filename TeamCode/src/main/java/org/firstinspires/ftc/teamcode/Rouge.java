@@ -10,7 +10,6 @@ import com.vuforia.HINT;
 import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -30,7 +29,7 @@ public class Rouge extends LinearOpMode {
     private ColorSensor csensor;
 
     private int initBlue, initRed, colorMax = 128, blueaverage, redaverage;
-
+    
     @Override
     public void runOpMode() throws InterruptedException{
         initCode();
