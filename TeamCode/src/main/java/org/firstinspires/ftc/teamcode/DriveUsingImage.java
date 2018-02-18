@@ -37,13 +37,11 @@ class DriveUsingImage{
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void driveTo(double x, double z, double rot, VuforiaLocalizer vuforia){
+    public void driveTo(double x, double z, double rot, VuforiaLocalizer vuforia, VuforiaTrackables relicTrackables, VuforiaTrackable relicTrackable){
+        opMode.telemetry.addData("or Here", true);
+        opMode.telemetry.update();
 
-        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4);
 
-        VuforiaTrackables relicTrackables = vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTrackable = relicTrackables.get(0);
-        relicTrackables.activate();
 
 
 
@@ -61,8 +59,10 @@ class DriveUsingImage{
         boolean rotNotReached = true;
         boolean xNotMet = true;
         boolean zNotMet = true;
-        pose = null;
-        while (pose == null) {
+        pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
+        opMode.telemetry.addData("4", true);
+        opMode.telemetry.update();
+        while (pose == null && opMode.opModeIsActive()) {
 
             pose = ((VuforiaTrackableDefaultListener) relicTrackable.getListener()).getPose();
         }
@@ -89,14 +89,14 @@ class DriveUsingImage{
                     heading = getEuler(pose).get(1);
                     cameraAngle = Math.toDegrees(Math.atan2(currentz,currentx)-Math.toRadians(heading));
 
-                    if (currentx < x-.005){
+                    if (currentx < x-1){
                         if (direction < .33){
                             direction = direction + .03;
                         }
                         if (direction > .33) {
                             direction = .33;
                         }
-                    }else if (currentx > x+.005) {
+                    }else if (currentx > x+1) {
                         if (direction > -.33){
                             direction = direction - .03;
                         }
@@ -111,12 +111,12 @@ class DriveUsingImage{
                     }
 
 
-                    if (cameraAngle<0){
+                    if (cameraAngle<-90){
                         if (orbit > -.33){
                             orbit = orbit-0.03;
                         }
 
-                    }else if (cameraAngle>0){
+                    }else if (cameraAngle>-90){
                         if (orbit < .33){
                             orbit = orbit+.03;
                         }
@@ -132,11 +132,15 @@ class DriveUsingImage{
                         }
                     }
 
-                    if(currentx<x+0.005 && currentx> x-0.005)xNotMet = false;
+                    if(currentx<x+1 && currentx> x-1)xNotMet = false;
                     lastz = currentz;
                     lastx = currentx;
-                    setDrive();
+
+
                 }
+                direction = 0;
+                strafe = 0;
+                setDrive();
 
 
 
@@ -147,6 +151,7 @@ class DriveUsingImage{
                 opMode.telemetry.addData("direction", direction);
                 opMode.telemetry.addData("strafe", strafe);
                 opMode.telemetry.addData("orbit", orbit);
+                opMode.telemetry.addData("inx", true);
                 opMode.telemetry.update();
 
 
@@ -184,28 +189,28 @@ class DriveUsingImage{
                     }
 
 
-                    if (cameraAngle<0){
+                    if (cameraAngle>-90){
                         if (orbit > -.33){
                             orbit = orbit-0.03;
                         }
 
-                    }else if (cameraAngle>0){
+                    }else if (cameraAngle<-90){
                         if (orbit < .33){
                             orbit = orbit+.03;
                         }
                     }
 
-                    if (z+.005>currentz){
+                    if (z+1>currentz){
                         if (strafe> -.33){
                             strafe = strafe-.03;
                         }
-                    }else if (z-.005<currentz){
+                    }else if (z-1<currentz){
                         if (strafe< .33){
                             strafe = strafe+.03;
                         }
                     }
 
-                    if(currentz<z+0.005 && currentz> z-0.005)zNotMet = false;
+                    if(currentz<z+1 && currentz> z-1)zNotMet = false;
                     lastz = currentz;
                     lastx = currentx;
                     setDrive();
@@ -220,6 +225,7 @@ class DriveUsingImage{
                 opMode.telemetry.addData("direction", direction);
                 opMode.telemetry.addData("strafe", strafe);
                 opMode.telemetry.addData("orbit", orbit);
+                opMode.telemetry.addData("inz", true);
                 opMode.telemetry.update();
 
 
@@ -266,10 +272,10 @@ class DriveUsingImage{
 
 
     private void updateDrive() {
-        backLeft.setPower(bl/4);
-        backRight.setPower(br/4);
-        frontLeft.setPower(fl/4);
-        frontRight.setPower(fr/4);
+        backLeft.setPower(bl);
+        backRight.setPower(br);
+        frontLeft.setPower(fl);
+        frontRight.setPower(fr);
 
 
     }

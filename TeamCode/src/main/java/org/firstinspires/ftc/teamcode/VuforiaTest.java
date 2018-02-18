@@ -68,7 +68,7 @@ public class VuforiaTest extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            driver.driveTo(0, 100, 0, vuforia);
+            driver.driveTo(0, 100, 0, vuforia,cards, three);
             telemetry.addData("it stopped!", "oh no!");
         }
 
