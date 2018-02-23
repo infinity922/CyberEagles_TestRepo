@@ -14,7 +14,8 @@ public class TeleOp extends OpMode {
         private double fl, fr, bl, br, step;
         private double holdPos= 0.5;
         private double overPos= 0;
-        int extra = 0;
+        final int TOP = 2735;
+
         private boolean lpressed,lreleased,rpressed,rreleased, upressed, urel, dpressed, drel= false;
 
         @Override
@@ -39,9 +40,12 @@ public class TeleOp extends OpMode {
             frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
             frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
             backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-            liftnTilt.setDirection(DcMotorSimple.Direction.REVERSE);
+            liftnTilt.setDirection(DcMotorSimple.Direction.FORWARD);
             rightWheel.setDirection(DcMotorSimple.Direction.FORWARD);
             leftWheel.setDirection(DcMotorSimple.Direction.REVERSE);
+            liftnTilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            liftnTilt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
         }
@@ -50,7 +54,7 @@ public class TeleOp extends OpMode {
             glyphControl();
             mecanumDrive();
             //relicMechanism();
-            telemetry.addData("armHeight", liftnTilt.getCurrentPosition());
+            telemetry.addData("Encoder pos", liftnTilt.getCurrentPosition());
             telemetry.update();
         }
         @Override
@@ -82,7 +86,27 @@ public class TeleOp extends OpMode {
         private void glyphControl(){
 
             //Blame Curtis for the next bit of code...
-            liftnTilt.setPower(gamepad2.left_stick_y);
+            if (!gamepad2.a){
+                if (liftnTilt.getCurrentPosition()<=TOP&&liftnTilt.getCurrentPosition()>= 0){
+                    liftnTilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    liftnTilt.setPower(-gamepad2.left_stick_y);
+
+                }else if (!(liftnTilt.getCurrentPosition()<=0)){
+                    liftnTilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    liftnTilt.setTargetPosition(0);
+                    liftnTilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    liftnTilt.setPower(1);
+                }else{
+                    liftnTilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    liftnTilt.setTargetPosition(TOP);
+                    liftnTilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    liftnTilt.setPower(1);
+                }
+            }else{
+                liftnTilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                liftnTilt.setPower(-gamepad2.left_stick_y);
+            }
+
             //Stop blaming Curtis, he didn't do it...
 
             if (gamepad2.x){
