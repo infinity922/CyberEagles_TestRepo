@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class TeleOp extends OpMode {
@@ -14,7 +15,8 @@ public class TeleOp extends OpMode {
         private double fl, fr, bl, br, step;
         private double holdPos= 0.5;
         private double overPos= 0;
-        final int TOP = 2735;
+        private final int TOP = 2735;
+        private ElapsedTime runtime = new ElapsedTime();
 
         private boolean lpressed,lreleased,rpressed,rreleased, upressed, urel, dpressed, drel= false;
 
@@ -181,6 +183,34 @@ public class TeleOp extends OpMode {
                 frontRight.setPower(fr/2);
                 backLeft.setPower(bl/2);
                 backRight.setPower(br/2);
+            }
+            if (gamepad1.left_bumper){
+                //strafe left
+                runtime.reset();
+                while (runtime.seconds()<.5){
+                    frontLeft.setPower(1);
+                    frontRight.setPower(-1);
+                    backLeft.setPower(-1);
+                    backRight.setPower(1);
+                }
+                frontRight.setPower(0);
+                frontLeft.setPower(0);
+                backRight.setPower(0);
+                backLeft.setPower(0);
+            }
+            if (gamepad1.right_bumper){
+                //strafe right
+                runtime.reset();
+                while (runtime.seconds()<.5){
+                    frontLeft.setPower(-1);
+                    frontRight.setPower(1);
+                    backLeft.setPower(1);
+                    backRight.setPower(-1);
+                }
+                frontRight.setPower(0);
+                frontLeft.setPower(0);
+                backRight.setPower(0);
+                backLeft.setPower(0);
             }
         }
     }
