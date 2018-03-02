@@ -38,8 +38,6 @@ public class DasAuto extends LinearOpMode{
             idle();
         }
         stopDrives();
-        0
-
 
     }
     private void setDrives(){
