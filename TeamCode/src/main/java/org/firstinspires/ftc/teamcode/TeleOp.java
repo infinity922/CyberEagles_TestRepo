@@ -9,13 +9,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class TeleOp extends OpMode {
         private DcMotor liftnTilt, frontLeft, frontRight, backLeft, backRight, armOut, leftWheel, rightWheel = null;
-        private Servo gripper, rHold, rOver, jewel, lArm, rArm;
+        private Servo align;
 
         //variables to store motor values to prevent stuttering
         private double fl, fr, bl, br, step;
         private double holdPos= 0.5;
         private double overPos= 0;
         private final int TOP = 2735;
+        public final double IN = .26;
+        public final double OUT = .71;
         private ElapsedTime runtime = new ElapsedTime();
 
         private boolean lpressed,lreleased,rpressed,rreleased, upressed, urel, dpressed, drel= false;
@@ -35,6 +37,7 @@ public class TeleOp extends OpMode {
             //rOver = hardwareMap.servo.get("rOver");
             //lArm = hardwareMap.servo.get("lArm");
             //rArm = hardwareMap.servo.get("rArm");
+            align = hardwareMap.servo.get("align");
 
             //run the arm motor with encoders
 
@@ -47,19 +50,27 @@ public class TeleOp extends OpMode {
             leftWheel.setDirection(DcMotorSimple.Direction.REVERSE);
             liftnTilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            liftnTilt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+
 
 
         }
         @Override
-        public void loop(){
+        public void loop() {
             glyphControl();
             mecanumDrive();
             //relicMechanism();
-            telemetry.addData("Encoder pos", liftnTilt.getCurrentPosition());
+            telemetry.addData("servo pos", align.getPosition());
             telemetry.update();
+
+            if (gamepad1.right_bumper) {
+                align.setPosition(OUT);
+
+            } else {
+                align.setPosition(IN);
+            }
         }
-        @Override
         public void stop(){
             liftnTilt.setPower(0);
             frontLeft.setPower(0);
@@ -89,24 +100,9 @@ public class TeleOp extends OpMode {
 
             //Blame Curtis for the next bit of code...
             if (!gamepad2.a){
-                if (liftnTilt.getCurrentPosition()<=TOP&&liftnTilt.getCurrentPosition()>= 0){
-                    liftnTilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    liftnTilt.setPower(-gamepad2.left_stick_y);
-
-                }else if (!(liftnTilt.getCurrentPosition()<=0)){
-                    liftnTilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    liftnTilt.setTargetPosition(0);
-                    liftnTilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    liftnTilt.setPower(1);
-                }else{
-                    liftnTilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    liftnTilt.setTargetPosition(TOP);
-                    liftnTilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    liftnTilt.setPower(1);
-                }
-            }else{
-                liftnTilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 liftnTilt.setPower(-gamepad2.left_stick_y);
+            }else{
+                liftnTilt.setPower(-gamepad2.left_stick_y*.7);
             }
 
             //Stop blaming Curtis, he didn't do it...
@@ -130,6 +126,7 @@ public class TeleOp extends OpMode {
             if (lArmPos > .7) lArmPos=.7;
             lArm.setPosition(lArmPos);
             rArm.setPosition(rArmPos);*/
+
         }
         private void mecanumDrive(){
             //this part does front, back, left and right from gamepad1.left_stick
@@ -184,33 +181,6 @@ public class TeleOp extends OpMode {
                 backLeft.setPower(bl/2);
                 backRight.setPower(br/2);
             }
-            if (gamepad1.left_bumper){
-                //strafe left
-                runtime.reset();
-                while (runtime.seconds()<.5){
-                    frontLeft.setPower(1);
-                    frontRight.setPower(-1);
-                    backLeft.setPower(-1);
-                    backRight.setPower(1);
-                }
-                frontRight.setPower(0);
-                frontLeft.setPower(0);
-                backRight.setPower(0);
-                backLeft.setPower(0);
-            }
-            if (gamepad1.right_bumper){
-                //strafe right
-                runtime.reset();
-                while (runtime.seconds()<.5){
-                    frontLeft.setPower(-1);
-                    frontRight.setPower(1);
-                    backLeft.setPower(1);
-                    backRight.setPower(-1);
-                }
-                frontRight.setPower(0);
-                frontLeft.setPower(0);
-                backRight.setPower(0);
-                backLeft.setPower(0);
-            }
+
         }
     }
