@@ -37,7 +37,7 @@ import java.util.Locale;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Rev_Gyro_test", group="K9bot")
+
 public class Rev_Gyro_test extends LinearOpMode {
 
     /* Declare OpMode members. */

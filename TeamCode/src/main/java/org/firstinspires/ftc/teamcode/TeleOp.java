@@ -21,6 +21,7 @@ public class TeleOp extends OpMode {
         private ElapsedTime runtime = new ElapsedTime();
 
         private boolean lpressed,lreleased,rpressed,rreleased, upressed, urel, dpressed, drel= false;
+        private boolean leftBumper = false;
 
         @Override
         public void init(){
@@ -98,6 +99,13 @@ public class TeleOp extends OpMode {
         }}*/
         private void glyphControl(){
 
+            if (gamepad1.right_bumper) {
+                align.setPosition(OUT);
+
+            } else {
+                align.setPosition(IN);
+            }
+
             //Blame Curtis for the next bit of code...
             if (!gamepad2.a){
                 liftnTilt.setPower(-gamepad2.left_stick_y);
@@ -128,7 +136,12 @@ public class TeleOp extends OpMode {
             rArm.setPosition(rArmPos);*/
 
         }
+
+
         private void mecanumDrive(){
+
+
+
             //this part does front, back, left and right from gamepad1.left_stick
             fl = gamepad1.left_stick_y - gamepad1.left_stick_x;
             fr = gamepad1.left_stick_y + gamepad1.left_stick_x;
@@ -168,6 +181,16 @@ public class TeleOp extends OpMode {
                 br = br + gamepad1.right_stick_x;
             }
 
+            if (gamepad1.left_bumper){
+                leftBumper = true;
+            }
+            if (!gamepad1.left_bumper){
+                if (leftBumper){
+                    leftBumper = false;
+                    onwards();
+                }
+            }else{leftBumper = false;}
+
             //this sends the variables to the motors
             //with a slow mode
             if (gamepad1.right_trigger!=0){
@@ -182,5 +205,31 @@ public class TeleOp extends OpMode {
                 backRight.setPower(br/2);
             }
 
+        }
+        private void onwards(){
+            runtime.reset();
+            while (runtime.milliseconds()<200){
+                br = .25;
+                bl = .25;
+                fr = .25;
+                fl = .25;
+                updateDrive();
+            }
+            stopDrive();
+        }
+
+        private void updateDrive() {
+            backLeft.setPower(bl);
+            backRight.setPower(br);
+            frontLeft.setPower(fl);
+            frontRight.setPower(fr);
+
+
+        }
+        private void stopDrive(){
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
         }
     }

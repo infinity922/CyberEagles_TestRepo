@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,7 +11,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Created by Ethan McGhan on 2018-02-17.
  */
 @Autonomous
-public class DasAuto extends LinearOpMode{
+
+public class  DasAuto extends LinearOpMode{
 
     private DcMotor frontRight, frontLeft, backRight, backLeft;
     private double fr,fl,br,bl;
