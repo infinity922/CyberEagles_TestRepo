@@ -4,9 +4,19 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.vuforia.HINT;
+import com.vuforia.Vuforia;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /**
  * Created by ethan on 2018-03-17.
@@ -15,6 +25,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class HydeHardware {
     public DcMotor frontLeft, frontRight, backRight, backLeft, liftnTilt, leftWheel, rightWheel;
     public Servo align;
+    public ColorSensor csensor;
     BNO055IMU imu1;
     BNO055IMU imu3;
 
@@ -33,6 +44,10 @@ public class HydeHardware {
 
         align = hardwareMap.servo.get("align");
 
+        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -48,6 +63,7 @@ public class HydeHardware {
         imu1.initialize(parameters);
         imu3 = hardwareMap.get(BNO055IMU.class, "imu3");
         imu3.initialize(parameters);
+
     }
 
 }

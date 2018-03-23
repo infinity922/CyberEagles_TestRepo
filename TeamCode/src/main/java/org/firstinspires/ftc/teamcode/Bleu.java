@@ -2,43 +2,51 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.vuforia.HINT;
 import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Thursday on 2/8/2018.
  */
-//@Autonomous
+@Autonomous
 public class Bleu extends LinearOpMode {
-    private DcMotor fL, fR, bR, bL;
-    private Servo jewel;
-    private double fr, fl, br, bl, extra, orbit, direction, strafe;
+    HydeHardware r = new HydeHardware();
+    private double extra, orbit, direction, strafe;
+    private double fl,fr,bl,br;
     private ElapsedTime runtime = new ElapsedTime();
 
-    OpenGLMatrix lastlocation = null;
+    private int initBlue, initRed, colorMax = 128, blueaverage, redaverage;
 
     @Override
     public void runOpMode() throws InterruptedException{
-        //init code
-        fR = hardwareMap.dcMotor.get("frontRight");
-        fL = hardwareMap.dcMotor.get("frontLeft");
-        bR = hardwareMap.dcMotor.get("backRight");
-        bL = hardwareMap.dcMotor.get("backLeft");
-        jewel = hardwareMap.servo.get("jewel");
+        //r.liftnTilt.setMode(RunMode.RUN_USING_ENCODER);
+        //r.liftnTilt.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
+        //get ambient light readings
+        /*for(int i=0; i < 5; i++) {
+            initBlue += r.csensor.blue();
+            initRed += r.csensor.red();
+
+            idle();
+        }
+
+        initBlue = initBlue/5;
+        initRed = initRed/5;
+        */
+        /*
         //vuforia init code
         VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
 
@@ -49,24 +57,52 @@ public class Bleu extends LinearOpMode {
 
         //create VuforiaLocalizer
         VuforiaLocalizer vuforia = ClassFactory.createVuforiaLocalizer(params);
+        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 1);
 
         VuforiaTrackables relicTrackables = vuforia.loadTrackablesFromAsset("RelicVuMark");
         VuforiaTrackable relicTrackable = relicTrackables.get(0);
-
-        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
-        allTrackables.addAll(relicTrackables);
-
-        float mmPerInch        = 25.4f;
-        float mmBotWidth       = 18 * mmPerInch;            // ... or whatever is right for your robot
-        float mmFTCFieldWidth  = (12*12 - 2) * mmPerInch;
-
         relicTrackable.setName("relicVuMarkTemplate");
         relicTrackables.activate();
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTrackable);
 
+        telemetry.addData("vuMark", vuMark);
+        telemetry.update();*/
+
+        r.init(hardwareMap);
         waitForStart();
+        /*currently using arbitrary numbers for 'extra'
+        if (vuMark == RelicRecoveryVuMark.CENTER)extra = .2;
+        if (vuMark == RelicRecoveryVuMark.LEFT)extra=0;
+        if (vuMark == RelicRecoveryVuMark.RIGHT)extra=.4;
+        */
         runtime.reset();
         //all command code here
+
+        //doJewel();
+        setDrive(0,0,-1,1.4);
+        setDrive(0,-1,0,1.2);
+        WheelsOn();
+        setDrive(0,-.25,-1,2);
+
+        WheelsOff();
+        setDrive(0,0,1,3);
+        DumpGlyphs();
+        idle();
+
+    }
+    private void DumpGlyphs(){
+        runtime.reset();
+        while (runtime.seconds()<1.35&&opModeIsActive()){
+            r.liftnTilt.setPower(.75);
+        }
+        r.liftnTilt.setPower(0);
+        setDrive(0,0,1,.5);
+        sleep(1000);
+        runtime.reset();
+        while(runtime.seconds()<1.35&&opModeIsActive()){
+            r.liftnTilt.setPower(-.75);
+        }
+        r.liftnTilt.setPower(0);
     }
     private void setDrive(double strafe, double orbit, double direction, double time){
         fl = 0;
@@ -85,16 +121,64 @@ public class Bleu extends LinearOpMode {
         fl = fl + direction;
         bl = bl + direction;
         br = br + direction;
-        while (time<runtime.seconds()) {
-            bL.setPower(bl / 4);
-            bR.setPower(br / 4);
-            fL.setPower(fl / 4);
-            fR.setPower(fr / 4);
-        }
         runtime.reset();
-        fR.setPower(0);
-        fL.setPower(0);
-        bL.setPower(0);
-        bR.setPower(0);
+        while (time>runtime.seconds()&&opModeIsActive()) {
+            r.backLeft.setPower(bl / 3);
+            r.backRight.setPower(br / 3);
+            r.frontLeft.setPower(fl / 3);
+            r.frontRight.setPower(fr / 3);
+        }
+        r.frontRight.setPower(0);
+        r.frontLeft.setPower(0);
+        r.backLeft.setPower(0);
+        r.backRight.setPower(0);
     }
+
+    private void WheelsOn(){
+        r.rightWheel.setPower(1);
+        r.leftWheel.setPower(1);
+    }
+    private void WheelsOff(){
+        r.rightWheel.setPower(0);
+        r.leftWheel.setPower(0);
+    }
+    /**private void doJewel(){
+        double revDirection=0;
+        jewel.setPosition(0);
+
+        //detect jewel color average
+        for(int i = 0; i < 5; i++) {
+            if ((csensor.blue() * colorMax ) / initBlue > (csensor.red() * colorMax) / initRed) {
+                blueaverage++;
+            }
+            else if ((csensor.red() * colorMax ) / initRed > (csensor.blue() * colorMax) / initBlue) {
+                redaverage++;
+            }
+            idle();
+        }
+
+        //carry out according action
+        if (redaverage>blueaverage){
+
+            revDirection = -1;
+            telemetry.addData("Jewel Status: ", "red");
+        }
+        else if (blueaverage>redaverage) {
+
+            revDirection = 1;
+            telemetry.addData("Jewel Status: ", "blue");
+        }
+        else {
+            telemetry.addData("Jewel Status: ", "not determined");
+        }
+        telemetry.update();
+
+        jewel.setPosition(1);
+
+        //return to initial position
+        setDrive(0,0,revDirection,.5);
+
+    }
+
+     */
 }

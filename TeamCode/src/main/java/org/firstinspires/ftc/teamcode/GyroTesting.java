@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -23,13 +23,13 @@ public class GyroTesting extends LinearOpMode {
     Orientation angles;
     Acceleration acceleration;
     float heading;
-    
-    
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         r.init(hardwareMap);
         int checks = 0;
-        
+
         waitForStart();
         while (opModeIsActive()){
             checks++;
@@ -38,11 +38,10 @@ public class GyroTesting extends LinearOpMode {
 
             telemetry.addData("checks", checks);
             telemetry.update();
-            idle();
         }
         telemetry.addData("exited", true);
         telemetry.update();
-        
+        idle();
     }
 
     void composeTelemetry() {
@@ -117,4 +116,3 @@ public class GyroTesting extends LinearOpMode {
     }
 
 }
-
