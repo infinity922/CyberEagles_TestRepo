@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -20,24 +21,39 @@ import java.util.Locale;
 
 public class GyroTesting extends LinearOpMode {
     HydeHardware r = new HydeHardware();
-    Orientation angles;
+    Orientation angles,angles2;
     Acceleration acceleration;
-    float heading;
-
+    float heading,heading1, heading2;
+    double fr,br,bl,fl;
+    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
         r.init(hardwareMap);
         int checks = 0;
 
-        waitForStart();
-        while (opModeIsActive()){
-            checks++;
 
+        //get an average of these later
+
+        waitForStart();
+        setDrive(0,1,0);
+        while (opModeIsActive()){
+            telemetry.clearAll();
+            checks++;
             composeTelemetry();
+
+            angles = r.imu1.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            angles2 = r.imu3.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            heading1 = AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle);
+            heading2 = AngleUnit.DEGREES.fromUnit(angles2.angleUnit, angles2.firstAngle);
+            heading = (heading1+heading2) /2;
+
 
             telemetry.addData("checks", checks);
             telemetry.update();
+            //work with a <-10 amount b/c of latency**dependent on processing.
+            if (heading>80 || heading<-80)setDrive(0,0,0);
+
         }
         telemetry.addData("exited", true);
         telemetry.update();
@@ -54,6 +70,7 @@ public class GyroTesting extends LinearOpMode {
 // to do that in each of the three items that need that info, as that's
 // three times the necessary expense.
             angles = r.imu1.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            angles2 = r.imu3.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             acceleration = r.imu1.getGravity();
         }
         });
@@ -101,6 +118,28 @@ public class GyroTesting extends LinearOpMode {
                                         + acceleration.zAccel*acceleration.zAccel));
                     }
                 });
+    }
+    private void setDrive(double strafe, double orbit, double direction){
+        fl = 0;
+        fr = 0;
+        bl = 0;
+        br = 0;
+        fl = fl + strafe;
+        fr = fr - strafe;
+        bl = bl - strafe;
+        br = br + strafe;
+        fl = fl + orbit;
+        fr = fr - orbit;
+        bl = bl + orbit;
+        br = br - orbit;
+        fr = fr + direction;
+        fl = fl + direction;
+        bl = bl + direction;
+        br = br + direction;
+            r.backLeft.setPower(bl / 3);
+            r.backRight.setPower(br / 3);
+            r.frontLeft.setPower(fl / 3);
+            r.frontRight.setPower(fr / 3);
     }
 
 //----------------------------------------------------------------------------------------------

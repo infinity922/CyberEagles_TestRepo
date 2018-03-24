@@ -13,6 +13,10 @@ import com.vuforia.HINT;
 import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -27,6 +31,8 @@ public class Bleu extends LinearOpMode {
     private double extra, orbit, direction, strafe;
     private double fl,fr,bl,br;
     private ElapsedTime runtime = new ElapsedTime();
+    float currentHeading = 0,heading2,heading1;
+    Orientation angles,angles2;
 
     private int initBlue, initRed, colorMax = 128, blueaverage, redaverage;
 
@@ -141,6 +147,50 @@ public class Bleu extends LinearOpMode {
     private void WheelsOff(){
         r.rightWheel.setPower(0);
         r.leftWheel.setPower(0);
+    }
+    void drive(double strafe,double orbit, double direction){
+        fl = 0;
+        fr = 0;
+        bl = 0;
+        br = 0;
+        fl = fl + strafe;
+        fr = fr - strafe;
+        bl = bl - strafe;
+        br = br + strafe;
+        fl = fl + orbit;
+        fr = fr - orbit;
+        bl = bl + orbit;
+        br = br - orbit;
+        fr = fr + direction;
+        fl = fl + direction;
+        bl = bl + direction;
+        br = br + direction;
+        r.backLeft.setPower(bl / 3);
+        r.backRight.setPower(br / 3);
+        r.frontLeft.setPower(fl / 3);
+        r.frontRight.setPower(fr / 3);
+    }
+    private void setHeading(float targetHeading){
+        angles = r.imu1.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles2 = r.imu3.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        heading1 = AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle);
+        heading2 = AngleUnit.DEGREES.fromUnit(angles2.angleUnit, angles2.firstAngle);
+        currentHeading = (heading1+heading2) /2;
+        //check which way to rotate will be faster
+        int orb=0;
+        if (currentHeading - targetHeading < -180)orb=1;
+        if (currentHeading + targetHeading > 180)orb=-1;
+        //set orbit that way, then do while loop until heading is reached.
+        drive(0,orb,0);
+        while (opModeIsActive()&& Math.abs(currentHeading) < Math.abs(targetHeading)){
+            //check heading
+            angles = r.imu1.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            angles2 = r.imu3.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            heading1 = AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle);
+            heading2 = AngleUnit.DEGREES.fromUnit(angles2.angleUnit, angles2.firstAngle);
+            currentHeading = (heading1+heading2) /2;
+        }
+        drive(0,0,0);
     }
     /**private void doJewel(){
         double revDirection=0;
