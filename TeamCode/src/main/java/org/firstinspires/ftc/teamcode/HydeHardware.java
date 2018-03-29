@@ -24,7 +24,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 public class HydeHardware {
     public DcMotor frontLeft, frontRight, backRight, backLeft, liftnTilt, leftWheel, rightWheel;
-    public Servo align;
+    public Servo jewel, flicker;
     public ColorSensor csensor;
     BNO055IMU imu1;
     BNO055IMU imu3;
@@ -41,8 +41,9 @@ public class HydeHardware {
         rightWheel = hardwareMap.dcMotor.get("rightWheel");
         leftWheel = hardwareMap.dcMotor.get("leftWheel");
         liftnTilt = hardwareMap.dcMotor.get("lift");
+        jewel = hardwareMap.servo.get("jewel");
+        flicker = hardwareMap.servo.get("flicker");
 
-        align = hardwareMap.servo.get("align");
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
