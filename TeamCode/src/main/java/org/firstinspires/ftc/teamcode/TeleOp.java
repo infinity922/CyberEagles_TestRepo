@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class TeleOp extends OpMode {
         private DcMotor liftnTilt, frontLeft, frontRight, backLeft, backRight, armOut, leftWheel, rightWheel = null;
-        private Servo align;
+        private Servo jewel, flicker;
 
         //variables to store motor values to prevent stuttering
         private double fl, fr, bl, br, step;
@@ -38,7 +38,8 @@ public class TeleOp extends OpMode {
             //rOver = hardwareMap.servo.get("rOver");
             //lArm = hardwareMap.servo.get("lArm");
             //rArm = hardwareMap.servo.get("rArm");
-            align = hardwareMap.servo.get("align");
+            jewel = hardwareMap.servo.get("jewel");
+            flicker = hardwareMap.servo.get("flicker");
 
             //run the arm motor with encoders
 
@@ -46,10 +47,11 @@ public class TeleOp extends OpMode {
             frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
             frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
             backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-            liftnTilt.setDirection(DcMotorSimple.Direction.FORWARD);
+            liftnTilt.setDirection(DcMotorSimple.Direction.REVERSE);
             rightWheel.setDirection(DcMotorSimple.Direction.FORWARD);
             leftWheel.setDirection(DcMotorSimple.Direction.REVERSE);
             liftnTilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            jewel.setPosition(1);
 
 
 
@@ -62,15 +64,7 @@ public class TeleOp extends OpMode {
             glyphControl();
             mecanumDrive();
             //relicMechanism();
-            telemetry.addData("servo pos", align.getPosition());
-            telemetry.update();
 
-            if (gamepad1.right_bumper) {
-                align.setPosition(OUT);
-
-            } else {
-                align.setPosition(IN);
-            }
         }
         public void stop(){
             liftnTilt.setPower(0);
@@ -99,18 +93,12 @@ public class TeleOp extends OpMode {
         }}*/
         private void glyphControl(){
 
-            if (gamepad1.right_bumper) {
-                align.setPosition(OUT);
-
-            } else {
-                align.setPosition(IN);
-            }
 
             //Blame Curtis for the next bit of code...
             if (!gamepad2.a){
-                liftnTilt.setPower(-gamepad2.left_stick_y);
-            }else{
                 liftnTilt.setPower(-gamepad2.left_stick_y*.7);
+            }else{
+                liftnTilt.setPower(-gamepad2.left_stick_y);
             }
 
             //Stop blaming Curtis, he didn't do it...

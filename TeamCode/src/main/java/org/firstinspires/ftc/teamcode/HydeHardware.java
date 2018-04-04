@@ -43,6 +43,7 @@ public class HydeHardware {
         liftnTilt = hardwareMap.dcMotor.get("lift");
         jewel = hardwareMap.servo.get("jewel");
         flicker = hardwareMap.servo.get("flicker");
+        csensor = hardwareMap.colorSensor.get("csensor");
 
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -66,5 +67,7 @@ public class HydeHardware {
         imu3.initialize(parameters);
 
     }
+
+
 
 }

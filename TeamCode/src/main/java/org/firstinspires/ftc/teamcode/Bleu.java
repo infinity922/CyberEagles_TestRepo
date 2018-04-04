@@ -35,7 +35,7 @@ public class Bleu extends LinearOpMode {
     float currentHeading = 0,heading2,heading1;
     Orientation angles,angles2;
 
-    private int initBlue, initRed, colorMax = 128, blueaverage, redaverage;
+    private int initBlue = 0, initRed = 0, colorMax = 128, blueaverage, redaverage;
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -43,15 +43,7 @@ public class Bleu extends LinearOpMode {
         //r.liftnTilt.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
         //get ambient light readings
-        for(int i=0; i < 5; i++) {
-            initBlue += r.csensor.blue();
-            initRed += r.csensor.red();
 
-            idle();
-        }
-
-        initBlue = initBlue/5;
-        initRed = initRed/5;
 
         /*
         //vuforia init code
@@ -76,10 +68,31 @@ public class Bleu extends LinearOpMode {
         telemetry.update();*/
 
         r.init(hardwareMap);
+
+        telemetry.addData("hardware", true);
+        telemetry.update();
+
+        /**for(int i=0; i < 5; i++) {
+            initBlue += r.csensor.blue();
+            initRed += r.csensor.red();
+
+            idle();
+        }
+
+        initBlue = initBlue/5;
+        initRed = initRed/5;
+
+        telemetry.addData("initial colours checked",initBlue);
+        telemetry.update();**/
+
         waitForStart();
 
+        setDrive(0,0,1,1);
+        setDrive(0,0,-1,1);
+
+        //wiggle(4);
         //set to initial position of the middle
-        r.flicker.setPosition(.5);
+        //r.flicker.setPosition(.5);
 
         /*currently using arbitrary numbers for 'extra'
         if (vuMark == RelicRecoveryVuMark.CENTER)extra = .2;
@@ -89,10 +102,10 @@ public class Bleu extends LinearOpMode {
 
         //all command code here
 
-        doJewel();
+        //doJewel();
 
         //note that direction is reversed
-        setDrive(0,0,-1,1.4);
+        /**setDrive(0,0,-1,1.4);
         setDrive(0,-1,0,1.2);
         WheelsOn();
         wiggle(2);
@@ -100,7 +113,7 @@ public class Bleu extends LinearOpMode {
         setDrive(0,0,1,.5);
         setHeading(90);
         setDrive(0,0,1,2);
-        DumpGlyphs();
+        DumpGlyphs();**/
 
         //line up and repeat, not forgetting to move over, unless it is okay to fill the column.
 
@@ -151,7 +164,7 @@ public class Bleu extends LinearOpMode {
     }
 
     //sets drive variables
-    void setDriveVars(double strafe,double orbit, double direction){
+    void setDriveVars(double strafe, double orbit, double direction){
         fl = 0;
         fr = 0;
         bl = 0;
