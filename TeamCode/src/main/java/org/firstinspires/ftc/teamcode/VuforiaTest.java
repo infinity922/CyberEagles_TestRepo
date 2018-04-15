@@ -19,7 +19,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 /**
  * Created by ethan on 2017-09-11.
  */
-@TeleOp()
 
 public class VuforiaTest extends LinearOpMode {
 

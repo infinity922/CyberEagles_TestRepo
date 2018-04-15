@@ -1,85 +1,108 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.vuforia.HINT;
+import com.vuforia.Vuforia;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-/**Copy and paste bleu.java and change the name. Also reverse jewel conditions, and headings.
+/**
+ * Created by Thursday on 2/8/2018.
  */
-class Rouge extends LinearOpMode{
-
+@Autonomous
+public class Rouge extends LinearOpMode {
+    //init hardware, variables, and runtime, also inital heading
     HydeHardware r = new HydeHardware();
     private double extra, orbit, direction, strafe;
     private double fl,fr,bl,br;
     private ElapsedTime runtime = new ElapsedTime();
     float currentHeading = 0,heading2,heading1;
+    boolean angleNeg = true;
     Orientation angles,angles2;
 
-    private int initBlue = 0, initRed = 0, colorMax = 128, blueaverage, redaverage;
+    private int initBlue, initRed, blueaverage, redaverage;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() throws InterruptedException{
+        r.init(hardwareMap);
         //r.liftnTilt.setMode(RunMode.RUN_USING_ENCODER);
         //r.liftnTilt.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
         //get ambient light readings
-
-
-        /*
-        //vuforia init code
-        VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
-
-        //set param values
-        params.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        params.vuforiaLicenseKey = "AbuDM6D/////AAAAGYYH2C9DTUzXt5vADIJYK4FhcJkx8VccnquSTg67efZ/JSLjC+qx1o+QV7idL5MYhjqswZglFenXN6KjsmP5lAUbShN6M0EvhpGdIoDx1f6zzUiiQts0GAswRyGwi4VJa+m8UMm8+ZJXi8k56X4gdn0KOr216AA0O0oqcMdIXc9A6q2KW5IlzvrTId8jZy8lLKrQStrJtUHtlqe5d2RT/gY7i+wIZz+aVTAvAdisMgCFsYWmK9IJdo3dPmrMVOFlhZvvgchEwYDKIJ6axGekXX8u2MAFl/hEuAJWpuoYa0/VzZ/JeM61dj6VpHsZaxC0BJMRG0ypQWWxbrJg0hjcjCdNhcMP6JSkNLU5AmTPDdC9";
-        params.cameraMonitorFeedback = VuforiaLocalizer.Parameters.CameraMonitorFeedback.AXES;
-
-        //create VuforiaLocalizer
-        VuforiaLocalizer vuforia = ClassFactory.createVuforiaLocalizer(params);
-        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 1);
-
-        VuforiaTrackables relicTrackables = vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTrackable = relicTrackables.get(0);
-        relicTrackable.setName("relicVuMarkTemplate");
-        relicTrackables.activate();
-        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTrackable);
-
-        telemetry.addData("vuMark", vuMark);
-        telemetry.update();*/
-
-        r.init(hardwareMap);
-
-        for(int i=0; i < 5; i++) {
+        /*for(int i=0; i < 5; i++) {
             initBlue += r.csensor.blue();
             initRed += r.csensor.red();
 
             idle();
-        }
+        }*/
 
         initBlue = initBlue/5;
         initRed = initRed/5;
+        //so if the csensor doesn't work then we won't be dividing by zero.
+        if (initBlue ==0)initBlue=1;
+        if (initRed==0)initRed=1;
 
         waitForStart();
+        //set to initial position of the middle
+        //r.flicker.setPosition(.5);
 
 
+        //doJewel();
+        //while (opModeIsActive())idle();
+
+
+        //note that direction is reversed
+        setDrive(0,0,-1,1.4);
+        setDrive(0,1,0,1.45);
+        setDrive(0,0,1,.4);
+        DumpGlyphs();
+        setDrive(0,0,-1,.4);
+
+        WheelsOn();
+        wiggle(2);
+        WheelsOff();
+        setDrive(0,0,1,1);
+        setHeading(-90);
+
+        /**
+         * (-180,180)
+         */
+        setDrive(0,0,1,1.5);
+        setDrive(0,0,-1,.4);
+        DumpGlyphs();
+        setDrive(0,0,-1,.5);
+        //line up and repeat, not forgetting to move over, unless it is okay to fill the column.
+
+        idle();
 
     }
 
+    //dump the glyphs and lower the lift back down
+    //based on time as no encoder currently
     private void DumpGlyphs(){
         runtime.reset();
-        while (runtime.seconds()<1.35&&opModeIsActive()){
-            r.liftnTilt.setPower(.75);
+        while (runtime.seconds()<4.5&&opModeIsActive()){
+            r.liftnTilt.setPower(-.75);
         }
         r.liftnTilt.setPower(0);
         setDrive(0,0,1,.5);
         sleep(1000);
         runtime.reset();
-        while(runtime.seconds()<1.35&&opModeIsActive()){
-            r.liftnTilt.setPower(-.75);
+
+        while(runtime.seconds()<3.5&& opModeIsActive()){
+            r.liftnTilt.setPower(1);
         }
         r.liftnTilt.setPower(0);
     }
@@ -98,6 +121,20 @@ class Rouge extends LinearOpMode{
         r.backRight.setPower(0);
     }
 
+    private void setFullDrive(double strafe, double orbit, double direction, double time){
+        setDriveVars(strafe,orbit,direction);
+        runtime.reset();
+        while (time>runtime.seconds()&&opModeIsActive()) {
+            r.backLeft.setPower(bl);
+            r.backRight.setPower(br);
+            r.frontLeft.setPower(fl);
+            r.frontRight.setPower(fr);
+        }
+        r.frontRight.setPower(0);
+        r.frontLeft.setPower(0);
+        r.backLeft.setPower(0);
+        r.backRight.setPower(0);
+    }
     //turn on block collecting wheels
     private void WheelsOn(){
         r.rightWheel.setPower(1);
@@ -137,41 +174,63 @@ class Rouge extends LinearOpMode{
         r.frontRight.setPower(fr / 3);
     }
 
-    private void setHeading(float targetHeading){
+    //sets  a heading for the robot
+    private void setHeading(float targetHeading) {
         //get an average of the current heading
         angles = r.imu1.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         angles2 = r.imu3.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         heading1 = AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle);
         heading2 = AngleUnit.DEGREES.fromUnit(angles2.angleUnit, angles2.firstAngle);
-        currentHeading = (heading1+heading2) /2;
-        //check which way to rotate will be faster
-        int orb=0;
-        if (currentHeading - targetHeading < -180)orb=1;
-        if (currentHeading + targetHeading > 180)orb=-1;
-        //set orbit that way, then do while loop until heading is reached.
-        drive(0,orb,0);
-        //-5 because of latency when the code is occuring, to make it more accurate without adding complexity
-        // or slowing down the robot
-        while (opModeIsActive()&& Math.abs(currentHeading) < Math.abs(targetHeading-5)){
-            //check heading
-            angles = r.imu1.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            angles2 = r.imu3.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            heading1 = AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle);
-            heading2 = AngleUnit.DEGREES.fromUnit(angles2.angleUnit, angles2.firstAngle);
-            currentHeading = (heading1+heading2) /2;
+        currentHeading = (heading1 + heading2) / 2;
+        //check which way to rotate will be faster, accounting for: (-Math.PI,Math.PI)
+        int orb = 0;
+        if (currentHeading + 180 <= 180 && (currentHeading < targetHeading && targetHeading < currentHeading + 180)) {
+            orb = -1;
+            angleNeg = false;
+        } else if (currentHeading + 180 <= 180) {
+            orb = 1;
         }
-        drive(0,0,0);
+        if (currentHeading - 180 >= -180 && currentHeading > targetHeading && targetHeading > currentHeading - 180) {
+            orb = 1;
+            angleNeg=false;
+        } else if (currentHeading - 180 >= -180) orb = -1;
+        //set orbit that way, then do while loop until heading is reached.
+        drive(0, orb, 0);
+        //-5 because of latency when the code is occuring, to make it more accurate without adding complexit
+        // or slowing down the robot
+        if (angleNeg && opModeIsActive()) {
+            while (opModeIsActive() && Math.abs(currentHeading) > Math.abs(targetHeading + 8)) {
+                //check heading
+                angles = r.imu1.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles2 = r.imu3.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                heading1 = AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle);
+                heading2 = AngleUnit.DEGREES.fromUnit(angles2.angleUnit, angles2.firstAngle);
+                currentHeading = (heading1 + heading2) / 2;
+            }
+        } else {
+            while (opModeIsActive() && Math.abs(currentHeading) < Math.abs(targetHeading - 8)){
+                //check heading
+                angles = r.imu1.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles2 = r.imu3.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                heading1 = AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle);
+                heading2 = AngleUnit.DEGREES.fromUnit(angles2.angleUnit, angles2.firstAngle);
+                currentHeading = (heading1 + heading2) / 2;
+            }
+        }
+        drive(0, 0, 0);
     }
+
     private void doJewel(){
         double revDirection=0;
-        r.jewel.setPosition(0);
+        //
+        // r.jewel.setPosition(0);
 
         //detect jewel color average
         for(int i = 0; i < 5; i++) {
-            if ((r.csensor.blue() * colorMax ) / initBlue > (r.csensor.red() * colorMax) / initRed) {
+            if (r.csensor.blue() / initBlue > r.csensor.red() / initRed) {
                 blueaverage++;
             }
-            else if ((r.csensor.red() * colorMax ) / initRed > (r.csensor.blue() * colorMax) / initBlue) {
+            else if (r.csensor.red() / initRed > (r.csensor.blue() / initBlue)) {
                 redaverage++;
             }
             idle();
@@ -181,12 +240,12 @@ class Rouge extends LinearOpMode{
         // then carry out according action.
         if (redaverage>blueaverage){
 
-            r.flicker.setPosition(0);
+            //setDrive(0,0,1,.4);
             telemetry.addData("Jewel Status: ", "red");
         }
         else if (blueaverage>redaverage) {
 
-            r.flicker.setPosition(1);
+            //setDrive(0,0,-1,.4);
             telemetry.addData("Jewel Status: ", "blue");
         }
         else {
@@ -194,7 +253,7 @@ class Rouge extends LinearOpMode{
         }
         telemetry.update();
 
-        r.jewel.setPosition(1);
+        //r.jewel.setPosition(1);
 
         //return to initial position
         setDrive(0,0,revDirection,.5);
@@ -202,13 +261,11 @@ class Rouge extends LinearOpMode{
 
     //To create a wiggling motion to help pick up blocks.
     private void wiggle(double time){
-        setDrive(0,.7,1,time/6);
-        setDrive(0,-.7,1,time/6);
-        setDrive(0,.7,1,time/6);
-        setDrive(0,-.7,1,time/6);
-        setDrive(0,.7,1,time/6);
-        setDrive(0,-.7,1,time/6);
-        //right Heading??
-        setHeading(90);
+        setFullDrive(0,.7,-1,time/6);
+        setFullDrive(0,-.7,-1,time/6);
+        setFullDrive(0,.7,-1,time/6);
+        setFullDrive(0,-.7,-1,time/6);
+        setFullDrive(0,.7,-1,time/6);
+        setFullDrive(0,-.7,-1,time/6);
     }
 }

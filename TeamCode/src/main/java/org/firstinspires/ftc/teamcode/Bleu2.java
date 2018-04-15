@@ -21,16 +21,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 /**
  * Created by Thursday on 2/8/2018.
  */
-
 @Autonomous
-public class Bleu extends LinearOpMode {
+public class Bleu2 extends LinearOpMode {
     //init hardware, variables, and runtime, also inital heading
     HydeHardware r = new HydeHardware();
     private double extra, orbit, direction, strafe;
     private double fl,fr,bl,br;
     private ElapsedTime runtime = new ElapsedTime();
     float currentHeading = 0,heading2,heading1;
-    boolean angleNeg = true,back=false;
+    boolean angleNeg = true;
     Orientation angles,angles2;
 
     private int initBlue, initRed, blueaverage, redaverage;
@@ -62,13 +61,12 @@ public class Bleu extends LinearOpMode {
         //doJewel();
         //while (opModeIsActive())idle();
 
-        //note that direction is reversed
-
         //mock up the position after jewel
-        setDrive(0,0,-1,.4);
+        setDrive(0,0,1,.2);
         idle();
 
-        setDrive(0,0,-1,1);
+        //note that direction is reversed
+        setDrive(0,0,1,1);
         setDrive(0,1,0,1.45);
         setDrive(0,0,1,.4);
         DumpGlyphs();
@@ -80,9 +78,9 @@ public class Bleu extends LinearOpMode {
         setDrive(0,0,1,1);
         setHeading(90);
 
-                /**
-                 * (-180,180)
-                 */
+        /**
+         * (-180,180)
+         */
         setDrive(0,0,1,1.5);
         setDrive(0,0,-1,.4);
         DumpGlyphs();
@@ -129,10 +127,10 @@ public class Bleu extends LinearOpMode {
         setDriveVars(strafe,orbit,direction);
         runtime.reset();
         while (time>runtime.seconds()&&opModeIsActive()) {
-            r.backLeft.setPower(bl);
-            r.backRight.setPower(br);
-            r.frontLeft.setPower(fl);
-            r.frontRight.setPower(fr);
+            r.backLeft.setPower(bl/2);
+            r.backRight.setPower(br/2);
+            r.frontLeft.setPower(fl/2);
+            r.frontRight.setPower(fr/2);
         }
         r.frontRight.setPower(0);
         r.frontLeft.setPower(0);
@@ -244,24 +242,23 @@ public class Bleu extends LinearOpMode {
         // then carry out according action.
         if (redaverage>blueaverage){
 
-            setDrive(0,0,1,.4);
-            back=true;
+            setDrive(0,0,1,.2);
             telemetry.addData("Jewel Status: ", "red");
-
         }
         else if (blueaverage>redaverage) {
 
-            setDrive(0,0,-1,.4);
+            setDrive(0,0,-1,.2);
             telemetry.addData("Jewel Status: ", "blue");
         }
         else {
             telemetry.addData("Jewel Status: ", "not determined");
         }
         telemetry.update();
-        if (back)setDrive(0,0,-1,.8);
-        r.jewel.setPosition(1);
+
+        //r.jewel.setPosition(1);
 
         //return to initial position
+        setDrive(0,0,revDirection,.4);
     }
 
     //To create a wiggling motion to help pick up blocks.

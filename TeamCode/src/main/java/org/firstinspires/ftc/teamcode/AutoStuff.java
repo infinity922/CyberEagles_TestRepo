@@ -19,6 +19,10 @@ public class AutoStuff extends OpMode {
     double finalorbit=0,finaldirection=0,orbitstart = 0,directionstart=0,orbitEnd=0,directionEnd=0;
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime orbitTime= new ElapsedTime(), directionTime=new ElapsedTime();
+    private Servo jewel;
+    private Servo flicker;
+    private ColorSensor csensor;
+    private double jpos=.5,fpos=.5;
 
     @Override
     public void init(){
@@ -35,12 +39,33 @@ public class AutoStuff extends OpMode {
         fL.setDirection(DcMotorSimple.Direction.FORWARD);
         fR.setDirection(DcMotorSimple.Direction.REVERSE);
         bL.setDirection(DcMotorSimple.Direction.REVERSE);
+        flicker = hardwareMap.servo.get("flicker");
+        jewel = hardwareMap.servo.get("jewel");
+        csensor = hardwareMap.colorSensor.get("csensor");
 
         glyphArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         glyphArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        jewel.setPosition(jpos);
+        flicker.setPosition(fpos);
 
     }
     public void loop(){
+        if (gamepad1.left_stick_y>0 && jpos<=1){
+            jpos+=.002;
+            jewel.setPosition(jpos);
+        }else if (gamepad1.left_stick_y<0&&jpos>=0){
+            jpos-=.002;
+            jewel.setPosition(jpos);
+        }
+        if (gamepad1.left_stick_x>0&&fpos<=1){
+            fpos+=.002;
+            flicker.setPosition(fpos);
+        }else if (gamepad1.left_stick_x<0&&fpos>=0){
+            fpos-=.002;
+            flicker.setPosition(fpos);
+        }
+        telemetry.addData("jpos: ",jpos);
+        telemetry.addData("fpos: ",fpos);
         if (gamepad1.right_bumper){
             orbit = -1;
             orbitstart = orbitTime.seconds();
@@ -51,6 +76,13 @@ public class AutoStuff extends OpMode {
             orbitEnd = orbitTime.seconds();
             finalorbit += (orbitEnd-orbitstart);
         }
+
+
+        telemetry.addData("Blue: ",csensor.blue());
+        telemetry.addData("Red: ",csensor.red());
+        if (csensor.blue()>csensor.red())telemetry.addData("Colour: ", "Blue");
+        else telemetry.addData("Colour: ", "Red");
+
 
         if (gamepad1.left_bumper){
             orbit = 1;
