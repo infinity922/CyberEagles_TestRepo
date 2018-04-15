@@ -23,7 +23,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 /**
  * Created by Ethan McGhan on 2018-01-13.
  */
-@Autonomous
 public class BlueLeft extends LinearOpMode {
     private DcMotor frontLeft;
     private DcMotor frontRight;

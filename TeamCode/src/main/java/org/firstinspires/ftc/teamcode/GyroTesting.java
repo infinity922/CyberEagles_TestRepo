@@ -17,8 +17,6 @@ import java.util.Locale;
 /**
  * Created by ethan on 2018-03-17.
  */
-@Autonomous
-
 public class GyroTesting extends LinearOpMode {
     HydeHardware r = new HydeHardware();
     Orientation angles,angles2;
@@ -36,7 +34,7 @@ public class GyroTesting extends LinearOpMode {
         //get an average of these later
 
         waitForStart();
-        setDrive(0,1,0);
+        //setDrive(0,1,0);
         while (opModeIsActive()){
             telemetry.clearAll();
             checks++;
@@ -47,13 +45,13 @@ public class GyroTesting extends LinearOpMode {
             heading1 = AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle);
             heading2 = AngleUnit.DEGREES.fromUnit(angles2.angleUnit, angles2.firstAngle);
             heading = (heading1+heading2) /2;
-
-
+            telemetry.addData("heading1:", heading1);
+            telemetry.addData("Heading2: ", heading2);
+            telemetry.update();
             telemetry.addData("checks", checks);
             telemetry.update();
             //work with a <-10 amount b/c of latency**dependent on processing.
             if (heading>80 || heading<-80)setDrive(0,0,0);
-
         }
         telemetry.addData("exited", true);
         telemetry.update();
