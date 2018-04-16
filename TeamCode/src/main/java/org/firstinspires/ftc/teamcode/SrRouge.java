@@ -2,27 +2,18 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.vuforia.HINT;
-import com.vuforia.Vuforia;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /**
- * Created by Thursday on 2/8/2018.
+ * Created by nightf on 15/04/18.
  */
 @Autonomous
-public class Bleu2 extends LinearOpMode {
+public class SrRouge extends LinearOpMode {
     //init hardware, variables, and runtime, also inital heading
     HydeHardware r = new HydeHardware();
     private double extra, orbit, direction, strafe;
@@ -35,7 +26,7 @@ public class Bleu2 extends LinearOpMode {
     private int initBlue, initRed, blueaverage, redaverage;
 
     @Override
-    public void runOpMode() throws InterruptedException{
+    public void runOpMode() throws InterruptedException {
         r.init(hardwareMap);
         //r.liftnTilt.setMode(RunMode.RUN_USING_ENCODER);
         //r.liftnTilt.setMode(RunMode.STOP_AND_RESET_ENCODER);
@@ -60,16 +51,17 @@ public class Bleu2 extends LinearOpMode {
         //while (opModeIsActive())idle();
 
         //mock up the position after jewel
-        setDrive(0,0,1,.2);
+        setDrive(0,0,-1,.2);
         idle();
 
         //note that direction is reversed
-        setDrive(0,0,1,1);
-        setDrive(0,1,0,1.4);
-        setDrive(0,0,1,1);
+        setDrive(0,1,0,.35);
+        setDrive(0,0,-1,.7);
+        setDrive(0,1,0,3);
+        setDrive(0,0,1,1.2);
         setDrive(0,0,-1,.4);
         DumpGlyphs();
-        setDrive(0,0,-1,.4);
+        setDrive(0,0,1,.4);
 /*
         WheelsOn();
         wiggle(2);
@@ -136,6 +128,10 @@ public class Bleu2 extends LinearOpMode {
         r.backRight.setPower(0);
     }
     //turn on block collecting wheels
+    private void WheelsOnRev(){
+        r.rightWheel.setPower(-1);
+        r.leftWheel.setPower(-1);
+    }
     private void WheelsOn(){
         r.rightWheel.setPower(1);
         r.leftWheel.setPower(1);
@@ -152,10 +148,10 @@ public class Bleu2 extends LinearOpMode {
         fr = 0;
         bl = 0;
         br = 0;
-        fl = fl + strafe;
-        fr = fr - strafe;
-        bl = bl - strafe;
-        br = br + strafe;
+        fl = fl - strafe;
+        fr = fr + strafe;
+        bl = bl + strafe;
+        br = br - strafe;
         fl = fl + orbit;
         fr = fr - orbit;
         bl = bl + orbit;

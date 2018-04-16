@@ -22,7 +22,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * Created by Thursday on 2/8/2018.
  */
 
-@Autonomous
 public class Bleu extends LinearOpMode {
     //init hardware, variables, and runtime, also inital heading
     HydeHardware r = new HydeHardware();

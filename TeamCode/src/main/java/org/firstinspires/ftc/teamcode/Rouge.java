@@ -55,37 +55,37 @@ public class Rouge extends LinearOpMode {
         if (initRed==0)initRed=1;
 
         waitForStart();
-        //set to initial position of the middle
-        //r.flicker.setPosition(.5);
-
 
         //doJewel();
         //while (opModeIsActive())idle();
 
 
+        //mock up the position after jewel
+        setDrive(0,0,-1,.2);
+        idle();
+
         //note that direction is reversed
-        setDrive(0,0,-1,1.4);
-        setDrive(0,1,0,1.45);
-        setDrive(0,0,1,.4);
+        setDrive(0,0,-1,1);
+        setDrive(0,1,0,1.4);
+        setDrive(0,0,1,1);
+        setDrive(0,0,-1,.4);
         DumpGlyphs();
         setDrive(0,0,-1,.4);
-
+/*
         WheelsOn();
         wiggle(2);
         WheelsOff();
         setDrive(0,0,1,1);
         setHeading(-90);
 
-        /**
-         * (-180,180)
-         */
+        //(-180,180)
         setDrive(0,0,1,1.5);
         setDrive(0,0,-1,.4);
         DumpGlyphs();
         setDrive(0,0,-1,.5);
         //line up and repeat, not forgetting to move over, unless it is okay to fill the column.
 
-        idle();
+        idle();*/
 
     }
 

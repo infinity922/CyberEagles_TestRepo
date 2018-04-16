@@ -14,7 +14,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 /**
  * Created by ethan on 2018-03-23.
  */
-@Autonomous
 public class GyroTest2 extends LinearOpMode {
     HydeHardware r = new HydeHardware();
     Orientation angles;

@@ -6,10 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 /**
  * Created by Ethan McGhan on 2018-02-17.
  */
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp
-
-
-
 public class Encoders extends OpMode {
     private DcMotor lift;
     @Override
