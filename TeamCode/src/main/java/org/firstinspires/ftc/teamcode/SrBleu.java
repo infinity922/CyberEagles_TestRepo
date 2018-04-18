@@ -32,7 +32,7 @@ public class SrBleu extends LinearOpMode {
         //r.liftnTilt.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
         //get ambient light readings
-        /*for(int i=0; i < 5; i++) {
+        for(int i=0; i < 5; i++) {
             initBlue += r.csensor.blue();
             initRed += r.csensor.red();
 
@@ -43,7 +43,7 @@ public class SrBleu extends LinearOpMode {
         initRed = initRed/5;
         //so if the csensor doesn't work then we won't be dividing by zero.
         if (initBlue ==0)initBlue=1;
-        if (initRed==0)initRed=1;*/
+        if (initRed==0)initRed=1;
 
         waitForStart();
 
@@ -96,7 +96,7 @@ public class SrBleu extends LinearOpMode {
         runtime.reset();
 
         while(runtime.seconds()<3.5&& opModeIsActive()){
-            r.liftnTilt.setPower(1);
+            r.liftnTilt.setPower(-1);
         }
         r.liftnTilt.setPower(0);
     }

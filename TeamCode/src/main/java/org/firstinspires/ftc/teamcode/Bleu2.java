@@ -41,7 +41,7 @@ public class Bleu2 extends LinearOpMode {
         //r.liftnTilt.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
         //get ambient light readings
-        /*for(int i=0; i < 5; i++) {
+        for(int i=0; i < 5; i++) {
             initBlue += r.csensor.blue();
             initRed += r.csensor.red();
 
@@ -52,7 +52,7 @@ public class Bleu2 extends LinearOpMode {
         initRed = initRed/5;
         //so if the csensor doesn't work then we won't be dividing by zero.
         if (initBlue ==0)initBlue=1;
-        if (initRed==0)initRed=1;*/
+        if (initRed==0)initRed=1;
 
         waitForStart();
 
@@ -94,7 +94,7 @@ public class Bleu2 extends LinearOpMode {
     private void DumpGlyphs(){
         runtime.reset();
         while (runtime.seconds()<4.5&&opModeIsActive()){
-            r.liftnTilt.setPower(-.75);
+            r.liftnTilt.setPower(.75);
         }
         r.liftnTilt.setPower(0);
         setDrive(0,0,1,.5);
@@ -102,7 +102,7 @@ public class Bleu2 extends LinearOpMode {
         runtime.reset();
 
         while(runtime.seconds()<3.5&& opModeIsActive()){
-            r.liftnTilt.setPower(1);
+            r.liftnTilt.setPower(-1);
         }
         r.liftnTilt.setPower(0);
     }
@@ -222,8 +222,7 @@ public class Bleu2 extends LinearOpMode {
 
     private void doJewel(){
         double revDirection=0;
-        //
-        // r.jewel.setPosition(0);
+        r.jewel.setPosition(0);
 
         //detect jewel color average
         for(int i = 0; i < 5; i++) {
@@ -253,7 +252,7 @@ public class Bleu2 extends LinearOpMode {
         }
         telemetry.update();
 
-        //r.jewel.setPosition(1);
+        r.jewel.setPosition(1);
 
         //return to initial position
         setDrive(0,0,revDirection,.4);

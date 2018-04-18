@@ -41,12 +41,12 @@ public class Rouge extends LinearOpMode {
         //r.liftnTilt.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
         //get ambient light readings
-        /*for(int i=0; i < 5; i++) {
+        for(int i=0; i < 5; i++) {
             initBlue += r.csensor.blue();
             initRed += r.csensor.red();
 
             idle();
-        }*/
+        }
 
         initBlue = initBlue/5;
         initRed = initRed/5;
@@ -56,7 +56,7 @@ public class Rouge extends LinearOpMode {
 
         waitForStart();
 
-        //doJewel();
+        doJewel();
         //while (opModeIsActive())idle();
 
 
@@ -94,7 +94,7 @@ public class Rouge extends LinearOpMode {
     private void DumpGlyphs(){
         runtime.reset();
         while (runtime.seconds()<4.5&&opModeIsActive()){
-            r.liftnTilt.setPower(-.75);
+            r.liftnTilt.setPower(.75);
         }
         r.liftnTilt.setPower(0);
         setDrive(0,0,1,.5);
@@ -102,7 +102,7 @@ public class Rouge extends LinearOpMode {
         runtime.reset();
 
         while(runtime.seconds()<3.5&& opModeIsActive()){
-            r.liftnTilt.setPower(1);
+            r.liftnTilt.setPower(-1);
         }
         r.liftnTilt.setPower(0);
     }

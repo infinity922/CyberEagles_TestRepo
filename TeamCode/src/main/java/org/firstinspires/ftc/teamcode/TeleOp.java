@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class TeleOp extends OpMode {
         private DcMotor liftnTilt, frontLeft, frontRight, backLeft, backRight, armOut, leftWheel, rightWheel = null;
-        private Servo jewel, flicker;
+        private Servo jewel;
 
         //variables to store motor values to prevent stuttering
         private double fl, fr, bl, br, step;
@@ -20,7 +20,6 @@ public class TeleOp extends OpMode {
         public final double OUT = .71;
         private ElapsedTime runtime = new ElapsedTime();
 
-        private boolean lpressed,lreleased,rpressed,rreleased, upressed, urel, dpressed, drel= false;
         private boolean leftBumper = false;
 
         @Override
@@ -30,16 +29,9 @@ public class TeleOp extends OpMode {
             frontRight = hardwareMap.dcMotor.get("frontRight");
             backLeft = hardwareMap.dcMotor.get("backLeft");
             backRight = hardwareMap.dcMotor.get("backRight");
-            //gripper = hardwareMap.servo.get("gripper");
-            //armOut = hardwareMap.dcMotor.get("armOut");
             rightWheel = hardwareMap.dcMotor.get("rightWheel");
             leftWheel = hardwareMap.dcMotor.get("leftWheel");
-            //rHold = hardwareMap.servo.get("rHold");
-            //rOver = hardwareMap.servo.get("rOver");
-            //lArm = hardwareMap.servo.get("lArm");
-            //rArm = hardwareMap.servo.get("rArm");
             jewel = hardwareMap.servo.get("jewel");
-            flicker = hardwareMap.servo.get("flicker");
 
             //run the arm motor with encoders
 
@@ -51,7 +43,7 @@ public class TeleOp extends OpMode {
             rightWheel.setDirection(DcMotorSimple.Direction.FORWARD);
             leftWheel.setDirection(DcMotorSimple.Direction.REVERSE);
             liftnTilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            jewel.setPosition(1);
+            //jewel.setPosition(1);
 
 
 
@@ -74,23 +66,7 @@ public class TeleOp extends OpMode {
             backLeft.setPower(0);
             leftWheel.setPower(0);
             rightWheel.setPower(0);
-            //armOut.setPower(0);
         }
-        /*private void relicMechanism(){
-            //this does the in and out motion of the linear slides
-            if (gamepad2.left_bumper) { armOut.setPower(gamepad2.left_stick_y);}
-            if (!gamepad2.left_bumper) {armOut.setPower(0);}
-            //This controls the servos at the end of the linear slides
-            if (gamepad2.left_bumper){
-                if (gamepad2.a) {
-                    if (holdPos >0){holdPos -= .02;rHold.setPosition(holdPos);}}
-                if (gamepad2.b){
-                    if (holdPos <1){holdPos += .02;rHold.setPosition(holdPos);}}
-                if (gamepad2.x) {rOver.setPosition(0);}
-                else {rOver.setPosition(0.45);}
-            telemetry.addData("overPos", overPos);
-            telemetry.update();
-        }}*/
         private void glyphControl(){
 
 
@@ -110,19 +86,6 @@ public class TeleOp extends OpMode {
                 leftWheel.setPower(gamepad2.right_trigger);
                 rightWheel.setPower(gamepad2.right_trigger);
             }
-
-            /*if (gamepad2.a) gripper.setPosition(1);
-            if (gamepad2.b) gripper.setPosition(0);
-
-            double lArmPos = gamepad2.left_trigger;
-            double rArmPos = gamepad2.left_trigger;
-            if (rArmPos < .2) rArmPos = .2;
-            if (lArmPos < .3) lArmPos = .3;
-            if (rArmPos > .7) rArmPos=.7;
-            if (lArmPos > .7) lArmPos=.7;
-            lArm.setPosition(lArmPos);
-            rArm.setPosition(rArmPos);*/
-
         }
 
 
