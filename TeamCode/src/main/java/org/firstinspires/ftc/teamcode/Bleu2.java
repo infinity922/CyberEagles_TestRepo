@@ -31,32 +31,17 @@ public class Bleu2 extends LinearOpMode {
     float currentHeading = 0,heading2,heading1;
     boolean angleNeg = true;
     Orientation angles,angles2;
+    DoJewel jewel = new DoJewel(r,0,this);
 
     private int initBlue, initRed, blueaverage, redaverage;
 
     @Override
     public void runOpMode() throws InterruptedException{
         r.init(hardwareMap);
-        //r.liftnTilt.setMode(RunMode.RUN_USING_ENCODER);
-        //r.liftnTilt.setMode(RunMode.STOP_AND_RESET_ENCODER);
-
-        //get ambient light readings
-        for(int i=0; i < 5; i++) {
-            initBlue += r.csensor.blue();
-            initRed += r.csensor.red();
-            idle();
-        }
-
-        initBlue = initBlue/5;
-        initRed = initRed/5;
-        //so if the csensor doesn't work then we won't be dividing by zero.
-        if (initBlue ==0)initBlue=1;
-        if (initRed==0)initRed=1;
 
         waitForStart();
 
-        doJewel();
-        while (opModeIsActive())idle();
+        if (!jewel.jewel())setDrive(0,0,1,.2);
 
         //note that direction is reversed
         setDrive(0,0,1,1);
@@ -213,44 +198,6 @@ public class Bleu2 extends LinearOpMode {
             }
         }
         drive(0, 0, 0);
-    }
-
-    private void doJewel(){
-        double revDirection=0;
-        r.jewel.setPosition(0);
-
-        //detect jewel color average
-        for(int i = 0; i < 5; i++) {
-            if (r.csensor.blue() / initBlue > r.csensor.red() / initRed) {
-                blueaverage++;
-            }
-            else if (r.csensor.red() / initRed > (r.csensor.blue() / initBlue)) {
-                redaverage++;
-            }
-            idle();
-        }
-
-        //determine if blue or red has a greater value.
-        // then carry out according action.
-        if (redaverage>blueaverage){
-
-            setDrive(0,0,1,.2);
-            telemetry.addData("Jewel Status: ", "red");
-        }
-        else if (blueaverage>redaverage) {
-
-            setDrive(0,0,-1,.2);
-            telemetry.addData("Jewel Status: ", "blue");
-        }
-        else {
-            telemetry.addData("Jewel Status: ", "not determined");
-        }
-        telemetry.update();
-
-        r.jewel.setPosition(1);
-
-        //return to initial position
-        setDrive(0,0,revDirection,.4);
     }
 
     //To create a wiggling motion to help pick up blocks.

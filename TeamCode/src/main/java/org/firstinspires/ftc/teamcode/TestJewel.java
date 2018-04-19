@@ -26,5 +26,9 @@ public class TestJewel extends LinearOpMode{
         r.init(hardwareMap);
         waitForStart();
         telemetry.addData("unblalnced: ", go.jewel());
+        sleep(5000);
+        DoJewel gi = new DoJewel(r,1,this);
+        telemetry.addData("unbalanced: ", gi.jewel());
+        sleep(5000);
     }
 }
