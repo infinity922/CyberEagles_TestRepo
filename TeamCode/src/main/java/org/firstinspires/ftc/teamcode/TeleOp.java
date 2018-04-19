@@ -43,20 +43,12 @@ public class TeleOp extends OpMode {
             rightWheel.setDirection(DcMotorSimple.Direction.FORWARD);
             leftWheel.setDirection(DcMotorSimple.Direction.REVERSE);
             liftnTilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //jewel.setPosition(1);
-
-
-
-
-
-
+            jewel.setPosition(.2);
         }
         @Override
         public void loop() {
             glyphControl();
             mecanumDrive();
-            //relicMechanism();
-
         }
         public void stop(){
             liftnTilt.setPower(0);
@@ -87,12 +79,7 @@ public class TeleOp extends OpMode {
                 rightWheel.setPower(gamepad2.right_trigger);
             }
         }
-
-
         private void mecanumDrive(){
-
-
-
             //this part does front, back, left and right from gamepad1.left_stick
             fl = gamepad1.left_stick_y - gamepad1.left_stick_x;
             fr = gamepad1.left_stick_y + gamepad1.left_stick_x;
@@ -168,7 +155,6 @@ public class TeleOp extends OpMode {
             }
             stopDrive();
         }
-
         private void updateDrive() {
             backLeft.setPower(bl);
             backRight.setPower(br);
