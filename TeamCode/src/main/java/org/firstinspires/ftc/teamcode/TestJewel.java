@@ -22,9 +22,9 @@ public class TestJewel extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException {
-        go = new DoJewel();
+        go = new DoJewel(r,0,this);
         r.init(hardwareMap);
         waitForStart();
-        telemetry.addData("unblalnced: ", go.jewel(r,1,this));
+        telemetry.addData("unblalnced: ", go.jewel());
     }
 }

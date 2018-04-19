@@ -90,7 +90,7 @@ public class SrBleu extends LinearOpMode {
     private void DumpGlyphs(){
         runtime.reset();
         while (runtime.seconds()<4.5&&opModeIsActive()){
-            r.liftnTilt.setPower(-.75);
+            r.liftnTilt.setPower(.75);
         }
         r.liftnTilt.setPower(0);
         setDrive(0,0,1,.5);

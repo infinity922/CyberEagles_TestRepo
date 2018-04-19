@@ -44,7 +44,6 @@ public class Bleu2 extends LinearOpMode {
         for(int i=0; i < 5; i++) {
             initBlue += r.csensor.blue();
             initRed += r.csensor.red();
-
             idle();
         }
 
@@ -56,12 +55,8 @@ public class Bleu2 extends LinearOpMode {
 
         waitForStart();
 
-        //doJewel();
-        //while (opModeIsActive())idle();
-
-        //mock up the position after jewel
-        setDrive(0,0,1,.2);
-        idle();
+        doJewel();
+        while (opModeIsActive())idle();
 
         //note that direction is reversed
         setDrive(0,0,1,1);
@@ -77,7 +72,7 @@ public class Bleu2 extends LinearOpMode {
         setDrive(0,0,1,1);
         setHeading(90);
 
-        (-180,180)
+        //(-180,180)
 
         setDrive(0,0,1,1.5);
         setDrive(0,0,-1,.4);

@@ -16,20 +16,34 @@ public class DoJewel {
     int redaverage;
     LinearOpMode mode;
     private ElapsedTime runtime = new ElapsedTime();
-    double bl,br,fr,fl;
+    double bl,br,fr,fl,initBlue,initRed;
 
-    public DoJewel(){
-
-    }
-
-
-    public boolean jewel(HydeHardware hydeHardware, int colour, LinearOpMode opMode){
+    public DoJewel(HydeHardware hydeHardware, int colour, LinearOpMode opMode){
         r = hydeHardware;
         team = colour;
         mode = opMode;
+    }
+
+
+    public boolean jewel(){
+
+        //get ambient light readings
+        for(int i=0; i < 5; i++) {
+            initBlue += r.csensor.blue();
+            initRed += r.csensor.red();
+            mode.idle();
+        }
+
+        initBlue = initBlue/5;
+        initRed = initRed/5;
+
+        //so if the csensor doesn't work then we won't be dividing by zero.
+        if (initBlue ==0)initBlue=1;
+        if (initRed==0)initRed=1;
+
         r.jewel.setPosition(.75);
         mode.sleep(500);
-        if (colour == RED){
+        if (team == RED){
             if (check() == 0){
                 setDrive(0,0,-1,.2);
                 r.jewel.setPosition(.2);
@@ -40,7 +54,7 @@ public class DoJewel {
                 r.jewel.setPosition(.2);
                 return true;
             }
-        }else if (colour == BLUE){
+        }else if (team == BLUE){
             if (check() == 1){
                 setDrive(0,0,-1,.2);
                 r.jewel.setPosition(.2);
@@ -58,10 +72,10 @@ public class DoJewel {
 
     int check(){
         for(int i = 0; i < 5 && mode.opModeIsActive(); i++) {
-            if (r.csensor.blue()>r.csensor.red()) {
+            if ((r.csensor.blue()/initBlue)>(r.csensor.red()/initRed)) {
                 blueaverage++;
             }
-            else if (r.csensor.red() > (r.csensor.blue())) {
+            else if ((r.csensor.red()/initRed) > ((r.csensor.blue())/initBlue)) {
                 redaverage++;
             }
             mode.idle();
