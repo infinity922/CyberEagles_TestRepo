@@ -31,44 +31,19 @@ public class Bleu extends LinearOpMode {
     float currentHeading = 0,heading2,heading1;
     boolean angleNeg = true,back=false;
     Orientation angles,angles2;
-    DoJewel go = new DoJewel();
+    DoJewel go = new DoJewel(r,0,this);
 
     private int initBlue, initRed, blueaverage, redaverage;
 
     @Override
     public void runOpMode() throws InterruptedException{
         r.init(hardwareMap);
-        //r.liftnTilt.setMode(RunMode.RUN_USING_ENCODER);
-        //r.liftnTilt.setMode(RunMode.STOP_AND_RESET_ENCODER);
-
-        //get ambient light readings
-        /*for(int i=0; i < 5; i++) {
-            initBlue += r.csensor.blue();
-            initRed += r.csensor.red();
-
-            idle();
-        }
-
-        initBlue = initBlue/5;
-        initRed = initRed/5;
-        //so if the csensor doesn't work then we won't be dividing by zero.
-        if (initBlue ==0)initBlue=1;
-        if (initRed==0)initRed=1;*/
-
-        waitForStart();
-        //set to initial position of the middle
-        //r.flicker.setPosition(.5);
-
-        //doJewel();
-        //while (opModeIsActive())idle();
 
         //note that direction is reversed
 
-        //mock up the position after jewel
+        go.jewel();
 
-        go.jewel(r,1, this);
-
-        setDrive(0,0,-1,.4);
+        setDrive(0,0,-1,.2);
         idle();
 
         setDrive(0,0,-1,1);
@@ -76,23 +51,22 @@ public class Bleu extends LinearOpMode {
         setDrive(0,0,1,.4);
         DumpGlyphs();
         setDrive(0,0,-1,.4);
-
+/*
         WheelsOn();
         wiggle(2);
         WheelsOff();
         setDrive(0,0,1,1);
         setHeading(90);
 
-                /**
-                 * (-180,180)
-                 */
+        //(-180,180)
+
         setDrive(0,0,1,1.5);
         setDrive(0,0,-1,.4);
         DumpGlyphs();
         setDrive(0,0,-1,.5);
         //line up and repeat, not forgetting to move over, unless it is okay to fill the column.
 
-        idle();
+        idle();*/
 
     }
 

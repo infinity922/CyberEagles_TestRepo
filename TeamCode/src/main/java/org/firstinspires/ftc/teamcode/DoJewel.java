@@ -45,25 +45,25 @@ public class DoJewel {
         mode.sleep(500);
         if (team == RED){
             if (check() == 0){
-                setDrive(0,0,-1,.2);
+                setDrive(0,0,-1,.3);
                 r.jewel.setPosition(.2);
-                setDrive(0,0,1,.2);
+                setDrive(0,0,1,.3);
                 return false;
             }else if (check() == 1){
-                setDrive(0,0,1,.2);
+                setDrive(0,0,1,.3);
                 r.jewel.setPosition(.2);
                 return true;
             }
         }else if (team == BLUE){
             if (check() == 1){
-                setDrive(0,0,-1,.2);
+                setDrive(0,0,-1,.3);
                 r.jewel.setPosition(.2);
 
                 return true;
             }else if (check() == 0){
-                setDrive(0,0,1,.2);
+                setDrive(0,0,1,.3);
                 r.jewel.setPosition(.2);
-                setDrive(0,0,-1,.2);
+                setDrive(0,0,-1,.3);
                 return false;
             }
         }
