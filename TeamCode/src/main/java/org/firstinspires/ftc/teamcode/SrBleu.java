@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -28,6 +29,7 @@ public class SrBleu extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         r.init(hardwareMap);
+        r.liftnTilt.setDirection(DcMotorSimple.Direction.REVERSE);
         //r.liftnTilt.setMode(RunMode.RUN_USING_ENCODER);
         //r.liftnTilt.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
