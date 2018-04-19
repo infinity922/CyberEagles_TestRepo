@@ -31,7 +31,7 @@ public class Bleu extends LinearOpMode {
     float currentHeading = 0,heading2,heading1;
     boolean angleNeg = true,back=false;
     Orientation angles,angles2;
-    DoJewel go;
+    DoJewel go = new DoJewel();
 
     private int initBlue, initRed, blueaverage, redaverage;
 

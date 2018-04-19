@@ -18,6 +18,10 @@ public class DoJewel {
     private ElapsedTime runtime = new ElapsedTime();
     double bl,br,fr,fl;
 
+    public DoJewel(){
+
+    }
+
 
     public boolean jewel(HydeHardware hydeHardware, int colour, LinearOpMode opMode){
         r = hydeHardware;
