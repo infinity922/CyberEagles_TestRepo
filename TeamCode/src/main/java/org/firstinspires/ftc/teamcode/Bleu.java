@@ -31,6 +31,7 @@ public class Bleu extends LinearOpMode {
     float currentHeading = 0,heading2,heading1;
     boolean angleNeg = true,back=false;
     Orientation angles,angles2;
+    DoJewel go;
 
     private int initBlue, initRed, blueaverage, redaverage;
 
@@ -64,6 +65,9 @@ public class Bleu extends LinearOpMode {
         //note that direction is reversed
 
         //mock up the position after jewel
+
+        go.jewel(r,1, this);
+
         setDrive(0,0,-1,.4);
         idle();
 

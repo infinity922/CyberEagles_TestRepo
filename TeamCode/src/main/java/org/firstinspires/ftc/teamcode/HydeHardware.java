@@ -48,6 +48,7 @@ public class HydeHardware {
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftnTilt.setDirection(DcMotorSimple.Direction.REVERSE);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -58,7 +59,7 @@ public class HydeHardware {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
 // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-// on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+// on a Core Device Interface Module, configured to be a senshor of type "AdaFruit IMU",
 // and named "imu".
         imu1 = hardwareMap.get(BNO055IMU.class, "imu1");
         imu1.initialize(parameters);
